@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include ioe_api *.css
+recursive-include ioe_api *.csv
+recursive-include ioe_api *.html
+recursive-include ioe_api *.ico
+recursive-include ioe_api *.js
+recursive-include ioe_api *.json
+recursive-include ioe_api *.md
+recursive-include ioe_api *.png
+recursive-include ioe_api *.py
+recursive-include ioe_api *.svg
+recursive-include ioe_api *.txt
+recursive-exclude ioe_api *.pyc
