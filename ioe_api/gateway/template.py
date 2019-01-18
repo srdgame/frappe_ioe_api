@@ -7,8 +7,7 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe import throw
-from ..api_auth import valid_auth_code
+from ..helper import valid_auth_code, throw
 
 
 @frappe.whitelist(allow_guest=True)
@@ -33,5 +32,5 @@ def list():
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})

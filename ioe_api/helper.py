@@ -39,3 +39,11 @@ def get_post_json_data():
 	if not data:
 		throw("request_body_missing")
 	return json.loads(data.decode('utf-8'))
+
+
+class ApiError(Exception):
+	http_status_code = 200
+
+
+def throw(err):
+	raise ApiError(err)

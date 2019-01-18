@@ -7,14 +7,7 @@
 
 from __future__ import unicode_literals
 import frappe
-import json
-import redis
-import datetime
-import uuid
-import requests
-from six import string_types
-
-from iot.hdb_api import list_iot_devices
+from ..helper import valid_auth_code, throw
 
 
 @frappe.whitelist(allow_guest=True)

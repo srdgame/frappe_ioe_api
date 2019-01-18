@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import throw
 from six import string_types
-from ..api_auth import valid_auth_code
+from ..helper import valid_auth_code
 
 
 @frappe.whitelist(allow_guest=True)
@@ -55,12 +55,12 @@ def create(task_name, description, timeout, script, *devices):
 
 		frappe.response.update({
 			"ok": True,
-			"name": doc.name
+			"data": doc.name
 		})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -78,7 +78,7 @@ def info(name):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -96,10 +96,10 @@ def status(name, update=False):
 
 		frappe.response.update({
 			"ok": True,
-			"status": frappe.get_value("IOT Batch Task", name, "status")
+			"data": frappe.get_value("IOT Batch Task", name, "status")
 		})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})

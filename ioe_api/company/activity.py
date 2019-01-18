@@ -7,9 +7,8 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe import throw
 from iot.iot.doctype.iot_device_activity.iot_device_activity import query_logs_by_company, count_logs_by_company, get_log_detail
-from ..api_auth import valid_auth_code, get_post_json_data
+from ..helper import valid_auth_code, get_post_json_data, throw
 
 
 @frappe.whitelist(allow_guest=True)
@@ -36,12 +35,12 @@ def list(name, start=0, limit=40, filters=None):
 
 		frappe.response.update({
 			"ok": True,
-			"activities": query_logs_by_company(company=name, start=start, limit=limit, filters=filters)
+			"data": query_logs_by_company(company=name, start=start, limit=limit, filters=filters)
 		})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -52,12 +51,12 @@ def count(name, filters=None):
 
 		frappe.response.update({
 			"ok": True,
-			"activities": count_logs_by_company(company=name, filters=filters)
+			"data": count_logs_by_company(company=name, filters=filters)
 		})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -72,7 +71,7 @@ def info(name):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -86,7 +85,7 @@ def dispose(*name, disposed=1):
 				doc = frappe.get_doc("IOT Device Activity", activity)
 				doc.dispose(disposed)
 			except Exception as ex:
-				warns.append(repr(ex))
+				warns.append(str(ex))
 
 		if len(warns) > 0:
 			frappe.response.update({
@@ -100,5 +99,5 @@ def dispose(*name, disposed=1):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})

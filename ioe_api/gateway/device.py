@@ -10,11 +10,10 @@ import frappe
 import redis
 import json
 import datetime
-from frappe import throw
 from frappe.utils import convert_utc_to_user_timezone
 from iot.iot.doctype.iot_hdb_settings.iot_hdb_settings import IOTHDBSettings
 from iot.device_api import send_action
-from ..api_auth import valid_auth_code
+from ..helper import valid_auth_code, throw
 
 
 @frappe.whitelist(allow_guest=True)
@@ -39,7 +38,7 @@ def list___xxx():
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -72,7 +71,7 @@ def list(gateway):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -87,7 +86,7 @@ def info(gateway, device=None):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -149,7 +148,7 @@ def data(gateway, device=None):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -175,7 +174,7 @@ def output(gateway, id, device, output, prop, value):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -200,5 +199,5 @@ def command(gateway, id, device, command, param=None):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})

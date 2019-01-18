@@ -8,7 +8,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import throw
-from ..api_auth import valid_auth_code
+from ..helper import valid_auth_code, throw
 
 
 @frappe.whitelist(allow_guest=True)
@@ -30,13 +30,15 @@ def info(name):
 
 		frappe.response.update({
 			"ok": True,
-			"use_beta": device.use_beta,
-			"use_beta_start_time": device.use_beta_start_time
+			"data": {
+				"use_beta": device.use_beta,
+				"use_beta_start_time": device.use_beta_start_time
+			}
 		})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -59,5 +61,5 @@ def update(name, use_beta):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})

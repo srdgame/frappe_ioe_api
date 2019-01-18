@@ -7,10 +7,9 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe import throw
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups as _list_user_groups
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
-from ..api_auth import valid_auth_code, get_post_json_data
+from ..helper import valid_auth_code, get_post_json_data, throw
 
 
 @frappe.whitelist(allow_guest=True)
@@ -63,12 +62,12 @@ def list():
 		}
 		frappe.response.update({
 			"ok": True,
-			"devices": devices
+			"data": devices
 		})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -115,7 +114,7 @@ def add(name, device_name, description, owner_type='User', owner_id=None):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -145,12 +144,12 @@ def info(name):
 		}
 		frappe.response.update({
 			"ok": True,
-			"device": device
+			"data": device
 		})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -171,7 +170,7 @@ def update(name, device_name=None, description=None):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
 
@@ -185,7 +184,7 @@ def remove(*devices):
 				doc = frappe.get_doc("IOT Device", sn)
 				doc.update_owner("", None)
 			except Exception as ex:
-				warns.append(repr(ex))
+				warns.append(str(ex))
 
 		if len(warns) > 0:
 			frappe.response.update({
@@ -199,6 +198,6 @@ def remove(*devices):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": repr(ex),
+			"error": str(ex),
 		})
 
