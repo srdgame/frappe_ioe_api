@@ -2,12 +2,19 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for gateway.xxx
+# Api for app store
 #
 
 from __future__ import unicode_literals
 import frappe
-from ..helper import valid_auth_code, throw
+import json
+import redis
+import datetime
+import uuid
+import requests
+from six import string_types
+
+from iot.hdb_api import list_iot_devices
 
 
 @frappe.whitelist(allow_guest=True)
@@ -15,22 +22,22 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "gateway.xxxx.test"
+		"source": "app.test"
 	})
 
 
 @frappe.whitelist(allow_guest=True)
 def list():
-	try:
-		valid_auth_code()
-		if not True:
-			throw("have_no_permission")
+	frappe.response.update({
+		"ok": True
+	})
 
-		frappe.response.update({
-			"ok": True,
-		})
-	except Exception as ex:
-		frappe.response.update({
-			"ok": False,
-			"error": str(ex),
-		})
+
+@frappe.whitelist(allow_guest=True)
+def info():
+	frappe.response.update({
+		"ok": True
+	})
+
+
+

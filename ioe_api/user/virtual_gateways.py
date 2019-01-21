@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 import frappe
 import uuid
 from ..helper import throw
-from ..gateway import info as gateway_info
+from ..gateways import info as gateway_info
 
 
 @frappe.whitelist(allow_guest=True)

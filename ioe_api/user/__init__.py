@@ -56,7 +56,7 @@ def register(email, full_name, redirect_to=None):
 		})
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def update_password(new_password, logout_all_sessions=0, key=None, old_password=None):
 	try:
 		ret, info = _update_password(new_password, logout_all_sessions, key, old_password)
@@ -74,7 +74,7 @@ def update_password(new_password, logout_all_sessions=0, key=None, old_password=
 		})
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def reset_password():
 	try:
 		info = _reset_password(user=frappe.session.user)
@@ -111,10 +111,12 @@ def login(user, password):
 
 		frappe.response.update({
 			"ok": True,
-			"user": user,
-			"csrf_token": csrf_token,
-			"groups": groups,
-			"companies": companies
+			"data": {
+				"user": user,
+				"csrf_token": csrf_token,
+				"groups": groups,
+				"companies": companies
+			}
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -122,8 +124,9 @@ def login(user, password):
 			"error": str(ex),
 		})
 
-@frappe.whitelist(allow_guest=True)
-def csrf():
+
+@frappe.whitelist()
+def csrf_token():
 	try:
 		csrf_token = frappe.sessions.get_csrf_token()
 		frappe.db.commit()
@@ -138,7 +141,8 @@ def csrf():
 			"error": str(ex),
 		})
 
-@frappe.whitelist(allow_guest=True)
+
+@frappe.whitelist()
 def update(name, email, phone, first_name, last_name):
 	try:
 		if 'Guest' == frappe.session.user:
@@ -165,14 +169,32 @@ def update(name, email, phone, first_name, last_name):
 
 
 @frappe.whitelist(allow_guest=True)
-def list():
+def info():
 	try:
-		valid_auth_code()
-		if not True:
-			throw("have_no_permission")
+		if 'Guest' == frappe.session.user:
+			frappe.response.update({
+				"ok": True,
+				"user": frappe.session.user,
+			})
+			return
+
+		user = frappe.get_doc("User", frappe.session.user)
+		companies = list_user_companies(frappe.session.user)
+		groups = list_user_groups(frappe.session.user)
 
 		frappe.response.update({
 			"ok": True,
+			"data": {
+				"user": user,
+				"csrf_token": csrf_token,
+				"groups": groups,
+				"companies": companies,
+
+				"email": user.email,
+				"phone": user.phone,
+				"first_name": user.first_name,
+				"last_name": user.last_name
+			}
 		})
 	except Exception as ex:
 		frappe.response.update({

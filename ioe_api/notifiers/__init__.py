@@ -7,7 +7,7 @@
 
 from __future__ import unicode_literals
 import frappe
-from ..helper import valid_auth_code, get_post_json_data, throw
+from ..helper import valid_auth_code, throw
 
 
 @frappe.whitelist(allow_guest=True)
@@ -15,7 +15,7 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "conf.test"
+		"source": "hub.test"
 	})
 
 
@@ -27,7 +27,7 @@ def list():
 
 
 @frappe.whitelist(allow_guest=True)
-def add():
+def create():
 	frappe.response.update({
 		"ok": True
 	})
