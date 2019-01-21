@@ -40,7 +40,7 @@ def list(name, start=0, limit=40, filters=None):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -56,7 +56,7 @@ def count(name, filters=None):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -71,7 +71,7 @@ def info(name):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -99,5 +99,5 @@ def dispose(*name, disposed=1):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})

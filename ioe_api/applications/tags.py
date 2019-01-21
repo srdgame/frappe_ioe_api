@@ -2,7 +2,7 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for app.tags
+# Api for applications.tags
 #
 
 from __future__ import unicode_literals
@@ -32,12 +32,12 @@ def list(name):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
 @frappe.whitelist(allow_guest=True)
-def add(name, *tags):
+def create(name, *tags):
 	try:
 		valid_auth_code()
 
@@ -48,7 +48,7 @@ def add(name, *tags):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -63,7 +63,7 @@ def remove(name, *tags):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -78,5 +78,5 @@ def clear(name):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})

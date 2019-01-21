@@ -34,7 +34,7 @@ def valid_auth():
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -92,7 +92,7 @@ def reset_password():
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -121,7 +121,7 @@ def login(user, password):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -138,7 +138,7 @@ def csrf_token():
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -164,7 +164,7 @@ def update(name, email, phone, first_name, last_name):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -199,6 +199,6 @@ def info():
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 

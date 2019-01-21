@@ -2,13 +2,12 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for configurations.versions
+# Api for store.reviews
 #
 
 from __future__ import unicode_literals
 import frappe
-from conf_center.conf_center.doctype.iot_application_conf_version.iot_application_conf_version import get_latest_version
-from ..helper import valid_auth_code, throw, as_dict, get_doc_as_dict
+from ..helper import valid_auth_code, throw, as_dict, update_doc, get_doc_as_dict
 
 
 @frappe.whitelist(allow_guest=True)
@@ -16,20 +15,21 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "configurations.versions.test"
+		"source": "store.reviews.test"
 	})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def list(name):
 	try:
-		version_list = []
-		for d in frappe.get_all("IOT Application Conf Version", "name", {"conf": name}, order_by="modified desc"):
-			version_list.append(as_dict(frappe.get_doc("IOT Application Conf Version", d[0])))
+		apps = []
+		filters = {"app": name}
+		for d in frappe.get_all("IOT Application Review", "name", filters=filters, order_by="modified desc"):
+			apps.append(as_dict(frappe.get_doc("IOT Application Review", d[0])))
 
 		frappe.response.update({
 			"ok": True,
-			"data": version_list
+			"data": apps
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -39,17 +39,18 @@ def list(name):
 
 
 @frappe.whitelist()
-def create(name, version, data, comment):
+def create(name, title, content, star):
 	try:
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
+		content = str(content).replace('\n', '<br>')
 
 		doc = frappe.get_doc({
-			"doctype": "IOT Application Conf Version",
-			"conf": name,
-			"version": version,
-			"data": data,
-			"comment": comment
+			"doctype": "IOT Application Review",
+			"app": name,
+			"star": star,
+			"title": title,
+			"content": content,
 		}).insert()
 
 		frappe.response.update({
@@ -63,12 +64,13 @@ def create(name, version, data, comment):
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def info(name):
 	try:
+
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("IOT Application Conf Version", name)
+			"data": get_doc_as_dict("IOT Application Review", name)
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -77,14 +79,22 @@ def info(name):
 		})
 
 
-@frappe.whitelist(allow_guest=True)
-def latest(name):
+@frappe.whitelist()
+def update(name, title, content, star):
 	try:
-		valid_auth_code()
-		ver = get_latest_version(conf=name)
+		if frappe.request.method != "POST":
+			throw("method_must_be_post")
+		content = str(content).replace('\n', '<br>')
+
+		doc = update_doc("IOT Application Review", name, {
+			"star": star,
+			"title": title,
+			"content": content
+		})
+
 		frappe.response.update({
 			"ok": True,
-			"data": ver
+			"data": as_dict(doc)
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -96,10 +106,14 @@ def latest(name):
 @frappe.whitelist()
 def remove(name):
 	try:
-		frappe.delete_doc("IOT Application Conf Version", name)
+		if frappe.request.method != "POST":
+			throw("method_must_be_post")
+
+		frappe.delete_doc("IOT Application Review", name)
+
 		frappe.response.update({
 			"ok": True,
-			"info": "configuration_version_deleted"
+			"data": "application_review_deleted"
 		})
 	except Exception as ex:
 		frappe.response.update({

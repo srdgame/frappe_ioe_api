@@ -2,7 +2,7 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for company
+# Api for companies
 #
 
 from __future__ import unicode_literals
@@ -34,21 +34,23 @@ def create():
 
 
 @frappe.whitelist(allow_guest=True)
-def info():
+def info(name):
 	frappe.response.update({
 		"ok": True
 	})
 
 
 @frappe.whitelist(allow_guest=True)
-def update():
+def update(name, info=None):
+	if not info:
+		info = get_post_json_data()
 	frappe.response.update({
 		"ok": True
 	})
 
 
 @frappe.whitelist(allow_guest=True)
-def remove():
+def remove(name):
 	frappe.response.update({
 		"ok": True
 	})

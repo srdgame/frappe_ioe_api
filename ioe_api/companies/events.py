@@ -2,7 +2,7 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for gateway.conf
+# Api for companies.events
 #
 
 from __future__ import unicode_literals
@@ -39,7 +39,7 @@ def list(name, start=0, limit=40, filters=None):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -55,7 +55,7 @@ def count(name, filters=None):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -70,7 +70,7 @@ def info(name):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -98,5 +98,5 @@ def dispose(*name, disposed=1):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})

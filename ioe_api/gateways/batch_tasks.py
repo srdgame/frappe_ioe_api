@@ -60,7 +60,7 @@ def create(task_name, description, timeout, script, *devices):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -78,7 +78,7 @@ def info(name):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -101,5 +101,5 @@ def status(name, update=False):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})

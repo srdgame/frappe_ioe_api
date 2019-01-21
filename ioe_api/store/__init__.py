@@ -7,14 +7,7 @@
 
 from __future__ import unicode_literals
 import frappe
-import json
-import redis
-import datetime
-import uuid
-import requests
-from six import string_types
-
-from iot.hdb_api import list_iot_devices
+from ..helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict
 
 
 @frappe.whitelist(allow_guest=True)
@@ -27,17 +20,44 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def list():
-	frappe.response.update({
-		"ok": True
-	})
+def list(*tags):
+	try:
+		apps = []
+		filters = {"owner": ["!=", "Administrator"], "published": 1}
+		for d in frappe.get_all("IOT Application", "name", filters=filters, order_by="modified desc"):
+			for tag in frappe.get_value("IOT Application Tag", ["name", "tag"], {"parent": d[0]}):
+				if tag[0] in tags:
+					apps.append(as_dict(frappe.get_doc("IOT Application", d[0])))
+
+		frappe.response.update({
+			"ok": True,
+			"data": apps
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
 
 
 @frappe.whitelist(allow_guest=True)
-def info():
+def info(name):
+	try:
+		frappe.response.update({
+			"ok": True,
+			"data": get_doc_as_dict("IOT Application", name)
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def search():
 	frappe.response.update({
 		"ok": True
 	})
-
 
 

@@ -8,7 +8,8 @@
 from __future__ import unicode_literals
 import frappe
 import json
-from frappe import throw, _
+from frappe import throw, _dict, _
+from frappe.model import default_fields
 
 
 def valid_auth_code(auth_code=None):
@@ -47,3 +48,41 @@ class ApiError(Exception):
 
 def throw(err):
 	raise ApiError(err)
+
+
+def as_dict(doc, keep_modified=True):
+	keep_data = _dict({
+		"name": doc.name
+	})
+	if keep_modified:
+		keep_data['modified'] = doc.modified
+
+	return doc.as_dict(no_default_fields=True).update(keep_data)
+
+
+def get_doc_as_dict(doc_type, name, keep_modified=True):
+	doc = None
+	try:
+		doc = frappe.get_doc(doc_type, name)
+	except Exception as ex:
+		throw("object_not_found")
+
+	return as_dict(doc, keep_modified=keep_modified)
+
+
+def update_doc(doc_type, name, d):
+	if frappe.request.method != "POST":
+		throw("method_must_be_post")
+
+	doc = None
+	try:
+		doc = frappe.get_doc(doc_type, name)
+	except Exception as ex:
+		throw("object_not_found")
+
+	d = _dict(d)
+	for key in default_fields:
+		if key in d:
+			del d[key]
+
+	return doc.update(d).save()

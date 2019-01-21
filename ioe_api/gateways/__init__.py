@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 import frappe
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups as _list_user_groups
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
-from ..helper import valid_auth_code, get_post_json_data, throw
+from ..helper import valid_auth_code, get_post_json_data, throw, update_doc, as_dict
 
 
 @frappe.whitelist(allow_guest=True)
@@ -67,12 +67,12 @@ def list():
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
 @frappe.whitelist(allow_guest=True)
-def add(name, device_name, description, owner_type='User', owner_id=None):
+def create(name, device_name, description, owner_type='User', owner_id=None):
 	try:
 		valid_auth_code()
 		# Valid the device owner
@@ -114,7 +114,7 @@ def add(name, device_name, description, owner_type='User', owner_id=None):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -126,43 +126,22 @@ def info(name):
 		if not device.has_permission("read"):
 			throw("have_no_permission")
 
-		device = {
-			'name': device.name,
-			'sn': device.sn,
-			'device_name': device.dev_name,
-			'description': device.description,
-			'enabled': device.enabled,
-			'company': device.company,
-			'owner_type': device.owner_type,
-			'owner_id': device.owner_id,
-			'longitude': device.longitude,
-			'latitude': device.latitude,
-			'beta': device.use_beta,
-			'use_beta_start_time': device.use_beta_start_time,
-			'device_status': device.device_status,
-			'last_updated': device.last_upated
-		}
 		frappe.response.update({
 			"ok": True,
-			"data": device
+			"data": as_dict(device)
 		})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
 @frappe.whitelist(allow_guest=True)
-def update(name, device_name=None, description=None):
+def update(name, info):
 	try:
 		valid_auth_code()
-		device = frappe.get_doc("IOT Device", name)
-		device.update({
-			"dev_name": device_name,
-			"description": description
-		})
-		device.save()
+		update_doc("IOT Device", name, info)
 		frappe.response.update({
 			"ok": True,
 			"message": "device_updated"
@@ -170,7 +149,7 @@ def update(name, device_name=None, description=None):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 
 
@@ -198,6 +177,6 @@ def remove(*devices):
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex),
+			"error": str(ex)
 		})
 

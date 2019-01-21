@@ -2,54 +2,101 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for gateway
+# Api for configurations
 #
 
 from __future__ import unicode_literals
 import frappe
-from ..helper import valid_auth_code, get_post_json_data, throw
+
+from ..helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict
 
 
-@frappe.whitelist(allow_guest=True)
-def test():
-	frappe.response.update({
-		"ok": True,
-		"data": "test_ok_result",
-		"source": "conf.test"
-	})
-
-
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def list():
-	frappe.response.update({
-		"ok": True
-	})
+	try:
+		apps = []
+		filters = {"owner": frappe.session.user}
+		for d in frappe.get_all("IOT Application Conf", "name", filters=filters, order_by="modified desc"):
+			apps.append(as_dict(frappe.get_doc("IOT Application Conf", d[0])))
+
+		frappe.response.update({
+			"ok": True,
+			"data": apps
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def create():
-	frappe.response.update({
-		"ok": True
-	})
+	try:
+		data = get_post_json_data()
+		data.update({
+			"doctype": "IOT Application Conf",
+			"owner": frappe.session.user,
+			"public": 0
+		})
+
+		doc = frappe.get_doc(data).insert()
+
+		frappe.response.update({
+			"ok": True,
+			"data": as_dict(doc)
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
 
 
-@frappe.whitelist(allow_guest=True)
-def info():
-	frappe.response.update({
-		"ok": True
-	})
+@frappe.whitelist()
+def info(name):
+	try:
+		frappe.response.update({
+			"ok": True,
+			"data": get_doc_as_dict("IOT Application Conf", name)
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
 
 
-@frappe.whitelist(allow_guest=True)
-def update():
-	frappe.response.update({
-		"ok": True
-	})
+@frappe.whitelist()
+def update(name, info):
+	try:
+		update_doc("IOT Application Conf", name, info)
+		frappe.response.update({
+			"ok": True,
+			"message": "configuration_updated"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
 
 
-@frappe.whitelist(allow_guest=True)
-def remove():
-	frappe.response.update({
-		"ok": True
-	})
+@frappe.whitelist()
+def remove(name):
+	try:
+		owner = frappe.get_value("IOT Application Conf", name, "owner")
+		if not owner:
+			throw("configuration_not_found")
+
+		if owner != frappe.session.user:
+			throw("not_configuration_owner")
+
+		# TODO: remove application not implemented so far
+		throw("contact_admin")
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
 
