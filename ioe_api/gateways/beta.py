@@ -26,7 +26,7 @@ def info(name):
 		valid_auth_code()
 		device = frappe.get_doc('IOT Device', name)
 		if not device.has_permission("read"):
-			throw("have_no_permission")
+			throw("has_no_permission")
 
 		frappe.response.update({
 			"ok": True,
@@ -51,7 +51,7 @@ def update(name, use_beta):
 
 		device = frappe.get_doc('IOT Device', name)
 		if not device.has_permission("read"):
-			throw("have_no_permission")
+			throw("has_no_permission")
 		device.set_use_beta()
 
 		frappe.response.update({

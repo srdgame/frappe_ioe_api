@@ -7,8 +7,8 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.core.doctype.user.user import sign_up, reset_password as _reset_password
-from frappe.utils.password import update_password as _update_password
+from frappe.handler import logout as frappe_logout
+from frappe.core.doctype.user.user import sign_up, reset_password as _reset_password, update_password as _update_password
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups
 from ..helper import valid_auth_code, throw
@@ -39,7 +39,7 @@ def valid_auth():
 
 
 @frappe.whitelist(allow_guest=True)
-def register(email, full_name, redirect_to=None):
+def create(email, full_name, redirect_to=None):
 	try:
 		ret, info = sign_up(email=email, full_name=full_name, redirect_to=redirect_to)
 
@@ -59,7 +59,17 @@ def register(email, full_name, redirect_to=None):
 @frappe.whitelist()
 def update_password(new_password, logout_all_sessions=0, key=None, old_password=None):
 	try:
-		ret, info = _update_password(new_password, logout_all_sessions, key, old_password)
+		user = frappe.session.user
+		if user == 'Guest':
+			if not key:
+				throw("reset_key_required")
+			user = frappe.db.get_value("User", {"reset_password_key": key})
+			if not user:
+				throw("reset_key_incorrect")
+
+		ret = _update_password(new_password, logout_all_sessions, key, old_password)
+		if frappe.local.login_manager.user != user:
+			throw("update_password_failed")
 
 		frappe.response.update({
 			"ok": True,
@@ -74,10 +84,10 @@ def update_password(new_password, logout_all_sessions=0, key=None, old_password=
 		})
 
 
-@frappe.whitelist()
-def reset_password():
+@frappe.whitelist(allow_guest=True)
+def reset_password(email):
 	try:
-		info = _reset_password(user=frappe.session.user)
+		info = _reset_password(user=email)
 		if info == 'not allowed':
 			throw('not_allowed')
 		if info == 'disabled':
@@ -87,7 +97,7 @@ def reset_password():
 
 		frappe.response.update({
 			"ok": True,
-			"info": 'password_reset_email_has_been_sent'
+			"info": 'password_reset_email_sent'
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -97,25 +107,30 @@ def reset_password():
 
 
 @frappe.whitelist(allow_guest=True)
-def login(user, password):
+def login(username, password):
 	try:
-		frappe.local.login_manager.authenticate(user, password)
-		if frappe.local.login_manager.user != user:
+		frappe.local.login_manager.authenticate(username, password)
+		if frappe.local.login_manager.user != username:
 			throw("username_password_not_matched")
 
-		csrf_token = frappe.sessions.get_csrf_token()
+		token = frappe.sessions.get_csrf_token()
 		frappe.db.commit()
 
-		companies = list_user_companies(user)
-		groups = list_user_groups(user)
+		companies = list_user_companies(username)
+		groups = list_user_groups(username)
+		doc = frappe.get_doc("User", frappe.session.user)
 
 		frappe.response.update({
 			"ok": True,
 			"data": {
-				"user": user,
-				"csrf_token": csrf_token,
+				"name": username,
+				"csrf_token": token,
 				"groups": groups,
-				"companies": companies
+				"companies": companies,
+				"email": doc.email,
+				"phone": doc.phone,
+				"first_name": doc.first_name,
+				"last_name": doc.last_name
 			}
 		})
 	except Exception as ex:
@@ -128,12 +143,12 @@ def login(user, password):
 @frappe.whitelist()
 def csrf_token():
 	try:
-		csrf_token = frappe.sessions.get_csrf_token()
+		token = frappe.sessions.get_csrf_token()
 		frappe.db.commit()
 
 		frappe.response.update({
 			"ok": True,
-			"data": csrf_token
+			"data": token
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -143,10 +158,27 @@ def csrf_token():
 
 
 @frappe.whitelist()
+def logout():
+	try:
+		frappe_logout()
+
+		frappe.response.update({
+			"ok": True,
+			"data": csrf_token
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": "exception",
+			"exception": str(ex)
+		})
+
+
+@frappe.whitelist()
 def update(name, email, phone, first_name, last_name):
 	try:
 		if 'Guest' == frappe.session.user:
-			throw("have_no_permission")
+			throw("no_permission")
 
 		user = frappe.get_doc("User", name)
 		user.update({
@@ -174,7 +206,9 @@ def info():
 		if 'Guest' == frappe.session.user:
 			frappe.response.update({
 				"ok": True,
-				"user": frappe.session.user,
+				"data": {
+					"name": frappe.session.user,
+				}
 			})
 			return
 
@@ -185,11 +219,10 @@ def info():
 		frappe.response.update({
 			"ok": True,
 			"data": {
-				"user": user,
+				"name": user,
 				"csrf_token": csrf_token,
 				"groups": groups,
 				"companies": companies,
-
 				"email": user.email,
 				"phone": user.phone,
 				"first_name": user.first_name,

@@ -30,7 +30,7 @@ def list___xxx():
 	try:
 		valid_auth_code()
 		if not True:
-			throw("have_no_permission")
+			throw("has_no_permission")
 
 		frappe.response.update({
 			"ok": True,
@@ -45,7 +45,7 @@ def list___xxx():
 def gateway_device_list(gateway=None):
 	doc = frappe.get_doc('IOT Device', gateway)
 	if not doc.has_permission("read"):
-		throw("have_no_permission")
+		throw("has_no_permission")
 
 	client = redis.Redis.from_url(IOTHDBSettings.get_redis_server() + "/11")
 	return client.lrange(gateway, 0, -1)
@@ -54,7 +54,7 @@ def gateway_device_list(gateway=None):
 def gateway_device_info(gateway=None, device=None):
 	doc = frappe.get_doc('IOT Device', gateway)
 	if not doc.has_permission("read"):
-		throw("have_no_permission")
+		throw("has_no_permission")
 
 	client = redis.Redis.from_url(IOTHDBSettings.get_redis_server() + "/10")
 	return json.loads(client.get(device or gateway) or "{}")
@@ -96,7 +96,7 @@ def data(gateway, device=None):
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
 		if not doc.has_permission("read"):
-			throw("have_no_permission")
+			throw("has_no_permission")
 
 		if not device:
 			device = gateway
@@ -158,7 +158,7 @@ def output(gateway, id, device, output, prop, value):
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
 		if not doc.has_permission("write"):
-			throw("have_no_permission")
+			throw("has_no_permission")
 
 		ret = send_action("output", id=id, device=gateway, data= {
 			"device": device,
@@ -184,7 +184,7 @@ def command(gateway, id, device, command, param=None):
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
 		if not doc.has_permission("write"):
-			throw("have_no_permission")
+			throw("has_no_permission")
 
 		ret = send_action("command", id=id, device=gateway, data= {
 			"device": device,

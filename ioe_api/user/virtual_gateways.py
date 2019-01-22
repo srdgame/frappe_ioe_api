@@ -2,7 +2,7 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for user.virtual_device
+# Api for user.virtual_gateways
 #
 
 from __future__ import unicode_literals
@@ -17,7 +17,7 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "gateway.xxxx.test"
+		"source": "user.virtual_gateways.test"
 	})
 
 
@@ -32,7 +32,8 @@ def list():
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
-			"error": str(ex)
+			"error": "exception",
+			"exception": str(ex)
 		})
 
 

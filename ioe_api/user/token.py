@@ -16,7 +16,7 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "gateway.xxxx.test"
+		"source": "user.token.test"
 	})
 
 
@@ -55,7 +55,6 @@ def info():
 		frappe.response.update({
 			"ok": True,
 			"data": code,
-			"user": frappe.session.user
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -79,7 +78,6 @@ def update():
 		frappe.response.update({
 			"ok": True,
 			"data": new_token,
-			"user": frappe.session.user
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -90,5 +88,17 @@ def update():
 
 @frappe.whitelist()
 def remove():
-	frappe.delete_doc("IOT User Api", frappe.session.user)
-	return True
+	try:
+		frappe.delete_doc("IOT User Api", frappe.session.user)
+
+		frappe.response.update({
+			"ok": True,
+			"info": "auth_code_removed"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": "exception",
+			"exception": str(ex)
+		})
+

@@ -69,7 +69,7 @@ def info(name):
 	try:
 		valid_auth_code()
 		if frappe.get_value("IOT Batch Task", name, "owner_id") != frappe.session.user:
-			throw("have_no_permission")
+			throw("has_no_permission")
 
 		frappe.response.update({
 			"ok": True,
@@ -88,7 +88,7 @@ def status(name, update=False):
 		valid_auth_code()
 
 		if frappe.get_value("IOT Batch Task", name, "owner_id") != frappe.session.user:
-			throw("have_no_permission")
+			throw("has_no_permission")
 
 		if update is not False:
 			doc = frappe.get_doc("IOT Batch Task", name)

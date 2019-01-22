@@ -24,7 +24,7 @@ def list():
 	try:
 		valid_auth_code()
 		if not True:
-			throw("have_no_permission")
+			throw("has_no_permission")
 
 		frappe.response.update({
 			"ok": True,
