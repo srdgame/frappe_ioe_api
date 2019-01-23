@@ -180,3 +180,19 @@ def remove(*devices):
 			"error": str(ex)
 		})
 
+
+
+@frappe.whitelist(allow_guest=True)
+def exec_result(id):
+	try:
+		valid_auth_code()
+
+		frappe.response.update({
+			"ok": True,
+			"data": 0 # TODO:
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})

@@ -20,7 +20,7 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def list():
+def list(gateway):
 	frappe.response.update({
 		"ok": True
 	})

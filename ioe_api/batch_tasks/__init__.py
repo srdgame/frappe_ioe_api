@@ -2,14 +2,14 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for gateway.batch_task
+# Api for batch_tasks
 #
 
 from __future__ import unicode_literals
 import frappe
 from frappe import throw
 from six import string_types
-from ..helper import valid_auth_code
+from ..helper import valid_auth_code, get_doc_as_dict
 
 
 @frappe.whitelist(allow_guest=True)
@@ -17,12 +17,32 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "gateway.batch_task.test"
+		"source": "batch_tasks.test"
 	})
 
 
 @frappe.whitelist(allow_guest=True)
-def create(task_name, description, timeout, script, *devices):
+def list():
+	try:
+		valid_auth_code()
+
+		ret = []
+		for d in frappe.get_all("IOT Batch Task", {"owner_id": frappe.session.user}, order_by="modified desc"):
+			ret.append(get_doc_as_dict("IOT Batch Task", d[0]))
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def create(task_name, description, timeout, script, *gateways):
 	try:
 		valid_auth_code()
 		'''
@@ -35,8 +55,8 @@ def create(task_name, description, timeout, script, *devices):
 			throw("invalid_task_name_type")
 		if not isinstance(script, string_types):
 			throw("invalid_script_type")
-		if not isinstance(devices, list):
-			throw("devices_required_as_array")
+		if not isinstance(gateways, list):
+			throw("gateways_required_as_array")
 
 		doc = frappe.get_doc({
 			"doctype": "IOT Batch Task",
@@ -47,7 +67,7 @@ def create(task_name, description, timeout, script, *devices):
 			"owner_id": frappe.session.user,
 		})
 
-		for dev in devices:
+		for dev in gateways:
 			doc.append("device_list", { "device": dev })
 		doc = doc.insert()
 		frappe.db.commit() # Commit to database to make sure batch task has been there before submit()
@@ -73,7 +93,7 @@ def info(name):
 
 		frappe.response.update({
 			"ok": True,
-			"data": frappe.get_doc("IOT Batch Task", name).as_dict()
+			"data": get_doc_as_dict("IOT Batch Task", name)
 		})
 	except Exception as ex:
 		frappe.response.update({

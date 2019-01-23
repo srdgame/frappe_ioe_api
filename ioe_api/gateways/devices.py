@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import frappe
 import redis
 import json
+import uuid
 import datetime
 from frappe.utils import convert_utc_to_user_timezone
 from iot.iot.doctype.iot_hdb_settings.iot_hdb_settings import IOTHDBSettings
@@ -76,12 +77,12 @@ def list(gateway):
 
 
 @frappe.whitelist(allow_guest=True)
-def info(gateway, device=None):
+def info(gateway, name=None):
 	try:
 		valid_auth_code()
 		frappe.response.update({
 			"ok": True,
-			"data": gateway_device_info(gateway)
+			"data": gateway_device_info(gateway, name)
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -91,26 +92,26 @@ def info(gateway, device=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def data(gateway, device=None):
+def data(gateway, name=None):
 	try:
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
 		if not doc.has_permission("read"):
 			throw("has_no_permission")
 
-		if not device:
-			device = gateway
+		if not name:
+			name = gateway
 
-		if device and device != gateway:
-			if device not in gateway_device_list(gateway):
+		if name and name != gateway:
+			if name not in gateway_device_list(gateway):
 				throw("no_such_device_in_gateway")
 
-		cfg = gateway_device_info(gateway, device)
+		cfg = gateway_device_info(gateway, name)
 		if not cfg:
 			throw("device_info_empty")
 
 		client = redis.Redis.from_url(IOTHDBSettings.get_redis_server() + "/12")
-		hs = client.hgetall(device)
+		hs = client.hgetall(name)
 		device_data = []
 
 		if cfg.has_key("inputs"):
@@ -153,15 +154,18 @@ def data(gateway, device=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def output(gateway, id, device, output, prop, value):
+def output(gateway, name, output, prop, value, id=None):
 	try:
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
 		if not doc.has_permission("write"):
 			throw("has_no_permission")
 
+		if not id:
+			id = str(uuid.uuid1()).upper(),
+
 		ret = send_action("output", id=id, device=gateway, data= {
-			"device": device,
+			"device": name,
 			"output": output,
 			"prop": prop,
 			"value": value
@@ -179,15 +183,18 @@ def output(gateway, id, device, output, prop, value):
 
 
 @frappe.whitelist(allow_guest=True)
-def command(gateway, id, device, command, param=None):
+def command(gateway, name, command, param=None, id=None):
 	try:
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
 		if not doc.has_permission("write"):
 			throw("has_no_permission")
 
+		if not id:
+			id = str(uuid.uuid1()).upper(),
+
 		ret = send_action("command", id=id, device=gateway, data= {
-			"device": device,
+			"device": name,
 			"cmd": command,
 			"param": param,
 		})
@@ -201,3 +208,4 @@ def command(gateway, id, device, command, param=None):
 			"ok": False,
 			"error": str(ex)
 		})
+

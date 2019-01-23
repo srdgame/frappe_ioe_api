@@ -21,10 +21,10 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def info(name):
+def info(gateway):
 	try:
 		valid_auth_code()
-		device = frappe.get_doc('IOT Device', name)
+		device = frappe.get_doc('IOT Device', gateway)
 		if not device.has_permission("read"):
 			throw("has_no_permission")
 
@@ -43,13 +43,11 @@ def info(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def update(name, use_beta):
+def enable(gateway):
 	try:
 		valid_auth_code()
-		if use_beta != 1:
-			throw('cannot_disable_beta_flag')
 
-		device = frappe.get_doc('IOT Device', name)
+		device = frappe.get_doc('IOT Device', gateway)
 		if not device.has_permission("read"):
 			throw("has_no_permission")
 		device.set_use_beta()
