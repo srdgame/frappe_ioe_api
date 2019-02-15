@@ -138,10 +138,11 @@ def info(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def update(name, info):
+def update():
 	try:
 		valid_auth_code()
-		update_doc("IOT Device", name, info)
+		data = get_post_json_data()
+		update_doc("IOT Device", data)
 		frappe.response.update({
 			"ok": True,
 			"message": "device_updated"

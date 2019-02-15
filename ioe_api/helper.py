@@ -70,17 +70,19 @@ def get_doc_as_dict(doc_type, name, keep_modified=True):
 	return as_dict(doc, keep_modified=keep_modified)
 
 
-def update_doc(doc_type, name, d):
+def update_doc(doc_type, d):
 	if frappe.request.method != "POST":
 		throw("method_must_be_post")
 
+	d = _dict(d)
+	if not d.name:
+		throw("object_name_not_found")
 	doc = None
 	try:
-		doc = frappe.get_doc(doc_type, name)
+		doc = frappe.get_doc(doc_type, d.name)
 	except Exception as ex:
 		throw("object_not_found")
 
-	d = _dict(d)
 	for key in default_fields:
 		if key in d:
 			del d[key]

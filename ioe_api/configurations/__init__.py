@@ -68,9 +68,10 @@ def info(name):
 
 
 @frappe.whitelist()
-def update(name, info):
+def update():
 	try:
-		update_doc("IOT Application Conf", name, info)
+		data = get_post_json_data()
+		update_doc("IOT Application Conf", data)
 		frappe.response.update({
 			"ok": True,
 			"message": "configuration_updated"

@@ -86,13 +86,6 @@ def refresh(gateway, id=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def info():
-	frappe.response.update({
-		"ok": True
-	})
-
-
-@frappe.whitelist(allow_guest=True)
 def install(gateway, app, version, inst, conf, id=None):
 	try:
 		valid_auth_code()

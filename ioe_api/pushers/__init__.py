@@ -102,7 +102,7 @@ def info(name):
 
 
 @frappe.whitelist()
-def update(name, info):
+def update():
 	try:
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
@@ -110,9 +110,10 @@ def update(name, info):
 		if 'Company Admin' in frappe.get_roles(frappe.session.user):
 			throw("not_company_admin")
 
-		validate_owner(name)
+		data = get_post_json_data()
+		validate_owner(data.get("name"))
 
-		update_doc("IOT User Application", name, info)
+		update_doc("IOT User Application", data)
 		frappe.response.update({
 			"ok": True,
 			"message": "configuration_updated"

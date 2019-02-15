@@ -7,7 +7,8 @@
 
 from __future__ import unicode_literals
 import frappe
-from ..helper import valid_auth_code, get_post_json_data, throw
+from cloud.cloud.doctype.cloud_company.cloud_company import list_admin_companies
+from ..helper import valid_auth_code, get_post_json_data, throw, get_doc_as_dict, update_doc
 
 
 @frappe.whitelist(allow_guest=True)
@@ -21,37 +22,99 @@ def test():
 
 @frappe.whitelist(allow_guest=True)
 def list():
-	frappe.response.update({
-		"ok": True
-	})
+	try:
+		valid_auth_code()
+		data = list_admin_companies(frappe.session.user)
+
+		frappe.response.update({
+			"ok": True,
+			"data": data
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
 
 
 @frappe.whitelist(allow_guest=True)
 def create():
-	frappe.response.update({
-		"ok": True
-	})
+	try:
+		valid_auth_code()
+		data = get_post_json_data()
+		if not data.get("comp_name"):
+			throw("company_name_missing")
+		if not data.get("domain"):
+			throw("domain_missing")
+
+		data.update({
+			"doctype": "Cloud Company",
+			"admin": frappe.session.user,
+			"enabled": 0,
+			"wechat": 0
+		})
+		doc = frappe.get_doc(data).insert()
+
+		frappe.response.update({
+			"ok": True,
+			"data": doc.name
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
 
 
 @frappe.whitelist(allow_guest=True)
 def info(name):
-	frappe.response.update({
-		"ok": True
-	})
+	try:
+		valid_auth_code()
+
+		frappe.response.update({
+			"ok": True,
+			"data": get_doc_as_dict("Cloud Company", name)
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
 
 
 @frappe.whitelist(allow_guest=True)
-def update(name, info=None):
-	if not info:
-		info = get_post_json_data()
-	frappe.response.update({
-		"ok": True
-	})
+def update(name, full_name, address, contact):
+	try:
+		update_doc("Cloud Company", {
+			"name": name,
+			"full_name": full_name,
+			"address": address,
+			"contact": contact
+		})
+		frappe.response.update({
+			"ok": True,
+			"message": "company_updated"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
 
 
 @frappe.whitelist(allow_guest=True)
 def remove(name):
-	frappe.response.update({
-		"ok": True
-	})
+	try:
+		update_doc("Cloud Company", {
+			"enabled": 0
+		})
+		frappe.response.update({
+			"ok": True,
+			"message": "company_updated"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
 

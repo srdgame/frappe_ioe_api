@@ -86,7 +86,8 @@ def update(name, title, content):
 			throw("method_must_be_post")
 		content = str(content).replace('\n', '<br>')
 
-		doc = update_doc("IOT Application Comment", name, {
+		doc = update_doc("IOT Application Comment", {
+			"name": name,
 			"title": title,
 			"content": content
 		})
