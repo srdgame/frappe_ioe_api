@@ -162,7 +162,7 @@ def output(gateway, name, output, prop, value, id=None):
 			throw("has_no_permission")
 
 		if not id:
-			id = str(uuid.uuid1()).upper(),
+			id = str(uuid.uuid1()).upper()
 
 		ret = send_action("output", id=id, device=gateway, data= {
 			"device": name,
@@ -191,7 +191,7 @@ def command(gateway, name, command, param=None, id=None):
 			throw("has_no_permission")
 
 		if not id:
-			id = str(uuid.uuid1()).upper(),
+			id = str(uuid.uuid1()).upper()
 
 		ret = send_action("command", id=id, device=gateway, data= {
 			"device": name,
