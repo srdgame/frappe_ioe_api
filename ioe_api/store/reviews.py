@@ -20,10 +20,10 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def list(name):
+def list(app):
 	try:
 		apps = []
-		filters = {"app": name}
+		filters = {"app": app}
 		for d in frappe.get_all("IOT Application Review", "name", filters=filters, order_by="modified desc"):
 			apps.append(as_dict(frappe.get_doc("IOT Application Review", d[0])))
 
@@ -39,7 +39,7 @@ def list(name):
 
 
 @frappe.whitelist()
-def create(name, title, content, star):
+def create(app, title, content, star):
 	try:
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
@@ -47,7 +47,7 @@ def create(name, title, content, star):
 
 		doc = frappe.get_doc({
 			"doctype": "IOT Application Review",
-			"app": name,
+			"app": app,
 			"star": star,
 			"title": title,
 			"content": content,
