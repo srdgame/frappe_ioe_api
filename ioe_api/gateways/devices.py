@@ -77,7 +77,7 @@ def list(gateway):
 
 
 @frappe.whitelist(allow_guest=True)
-def info(gateway, name=None):
+def read(gateway, name=None):
 	try:
 		valid_auth_code()
 		frappe.response.update({

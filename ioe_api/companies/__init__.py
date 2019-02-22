@@ -67,7 +67,7 @@ def create():
 
 
 @frappe.whitelist(allow_guest=True)
-def info(name):
+def read(name):
 	try:
 		valid_auth_code()
 

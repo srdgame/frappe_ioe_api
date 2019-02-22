@@ -119,7 +119,7 @@ def create(name, device_name, description, owner_type='User', owner_id=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def info(name):
+def read(name):
 	try:
 		valid_auth_code()
 		device = frappe.get_doc('IOT Device', name)

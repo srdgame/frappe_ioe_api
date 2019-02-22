@@ -47,7 +47,7 @@ def create():
 
 
 @frappe.whitelist()
-def info():
+def read():
 	try:
 		code = frappe.get_value("IOT User Api", frappe.session.user, "authorization_code")
 		if not code:

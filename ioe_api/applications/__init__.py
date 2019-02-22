@@ -104,7 +104,7 @@ def icon():
 
 
 @frappe.whitelist()
-def info(name):
+def read(name):
 	try:
 		frappe.response.update({
 			"ok": True,

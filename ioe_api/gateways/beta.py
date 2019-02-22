@@ -21,7 +21,7 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def info(gateway):
+def read(gateway):
 	try:
 		valid_auth_code()
 		device = frappe.get_doc('IOT Device', gateway)

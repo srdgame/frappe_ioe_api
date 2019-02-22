@@ -12,6 +12,15 @@ from cloud.cloud.doctype.cloud_company.cloud_company import list_admin_companies
 from ..helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict
 
 
+@frappe.whitelist(allow_guest=True)
+def test():
+	frappe.response.update({
+		"ok": True,
+		"data": "test_ok_result",
+		"source": "pushers.test"
+	})
+
+
 def validate_owner(name):
 	companies = list_admin_companies(frappe.session.user)
 	user = frappe.get_value("IOT User Application", name, "on_behalf")
@@ -83,7 +92,7 @@ def create():
 
 
 @frappe.whitelist()
-def info(name):
+def read(name):
 	try:
 		if 'Company Admin' in frappe.get_roles(frappe.session.user):
 			throw("not_company_admin")

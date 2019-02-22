@@ -60,7 +60,7 @@ def create():
 
 
 @frappe.whitelist()
-def info(name):
+def read(name):
 	try:
 		doc = frappe.get_doc("IOT Virtual Device", name)
 		return gateway_info(name)

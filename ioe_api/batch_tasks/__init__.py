@@ -85,7 +85,7 @@ def create(task_name, description, timeout, script, *gateways):
 
 
 @frappe.whitelist(allow_guest=True)
-def info(name):
+def read(name):
 	try:
 		valid_auth_code()
 		if frappe.get_value("IOT Batch Task", name, "owner_id") != frappe.session.user:

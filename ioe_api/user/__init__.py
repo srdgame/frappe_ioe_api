@@ -201,7 +201,7 @@ def update(name, email, phone, first_name, last_name):
 
 
 @frappe.whitelist(allow_guest=True)
-def info():
+def read():
 	try:
 		if 'Guest' == frappe.session.user:
 			frappe.response.update({

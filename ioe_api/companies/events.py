@@ -60,7 +60,7 @@ def count(name, filters=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def info(name):
+def read(name):
 	try:
 		valid_auth_code()
 		frappe.response.update({

@@ -65,7 +65,7 @@ def create(app, title, content, star):
 
 
 @frappe.whitelist(allow_guest=True)
-def info(name):
+def read(name):
 	try:
 
 		frappe.response.update({

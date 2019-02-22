@@ -113,7 +113,7 @@ def install(gateway, app, version, inst, conf, id=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def remove(gateway, inst):
+def remove(gateway, inst, id=None):
 	try:
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
@@ -134,7 +134,7 @@ def remove(gateway, inst):
 
 
 @frappe.whitelist(allow_guest=True)
-def conf(gateway, inst, conf):
+def conf(gateway, inst, conf, id=None):
 	try:
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
@@ -155,7 +155,7 @@ def conf(gateway, inst, conf):
 
 
 @frappe.whitelist(allow_guest=True)
-def start(gateway, inst):
+def start(gateway, inst, id=None):
 	try:
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
@@ -176,7 +176,7 @@ def start(gateway, inst):
 
 
 @frappe.whitelist(allow_guest=True)
-def stop(gateway, inst, reason):
+def stop(gateway, inst, reason, id=None):
 	try:
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
@@ -197,7 +197,7 @@ def stop(gateway, inst, reason):
 
 
 @frappe.whitelist(allow_guest=True)
-def upgrade(gateway, inst, app, version, conf):
+def upgrade(gateway, inst, app, version, conf, id=None):
 	try:
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
