@@ -76,7 +76,7 @@ def read(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def dispose(*name, disposed):
+def dispose(name, disposed):
 	try:
 		valid_auth_code()
 		warns = []
