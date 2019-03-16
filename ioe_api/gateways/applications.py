@@ -33,7 +33,7 @@ def list(gateway):
 		if not device.has_permission("read"):
 			throw("has_no_permission")
 
-		client = redis.Redis.from_url(IOTHDBSettings.get_redis_server() + "/6")
+		client = redis.Redis.from_url(IOTHDBSettings.get_redis_server() + "/6", decode_responses=True)
 		app_list = []
 		app_list_json_str = client.get(gateway)
 		if app_list_json_str:

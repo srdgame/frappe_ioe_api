@@ -48,7 +48,7 @@ def gateway_device_list(gateway=None):
 	if not doc.has_permission("read"):
 		throw("has_no_permission")
 
-	client = redis.Redis.from_url(IOTHDBSettings.get_redis_server() + "/11")
+	client = redis.Redis.from_url(IOTHDBSettings.get_redis_server() + "/11", decode_responses=True)
 	return client.lrange(gateway, 0, -1)
 
 
@@ -57,7 +57,7 @@ def gateway_device_info(gateway=None, device=None):
 	if not doc.has_permission("read"):
 		throw("has_no_permission")
 
-	client = redis.Redis.from_url(IOTHDBSettings.get_redis_server() + "/10")
+	client = redis.Redis.from_url(IOTHDBSettings.get_redis_server() + "/10", decode_responses=True)
 	return json.loads(client.get(device or gateway) or "{}")
 
 
@@ -110,7 +110,7 @@ def data(gateway, name=None):
 		if not cfg:
 			throw("device_info_empty")
 
-		client = redis.Redis.from_url(IOTHDBSettings.get_redis_server() + "/12")
+		client = redis.Redis.from_url(IOTHDBSettings.get_redis_server() + "/12", decode_responses=True)
 		hs = client.hgetall(name)
 		device_data = []
 
