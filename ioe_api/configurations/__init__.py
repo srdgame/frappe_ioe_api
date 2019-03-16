@@ -8,7 +8,7 @@
 from __future__ import unicode_literals
 import frappe
 
-from ..helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict
+from ioe_api.helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict
 
 
 @frappe.whitelist()

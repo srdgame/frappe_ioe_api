@@ -8,7 +8,7 @@
 from __future__ import unicode_literals
 import frappe
 from conf_center.conf_center.doctype.iot_application_conf_version.iot_application_conf_version import get_latest_version
-from ..helper import valid_auth_code, throw, as_dict, get_doc_as_dict
+from ioe_api.helper import valid_auth_code, throw, as_dict, get_doc_as_dict
 
 
 @frappe.whitelist(allow_guest=True)

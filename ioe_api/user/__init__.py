@@ -11,7 +11,7 @@ from frappe.handler import logout as frappe_logout
 from frappe.core.doctype.user.user import sign_up, reset_password as _reset_password, update_password as _update_password
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups
-from ..helper import valid_auth_code, throw
+from ioe_api.helper import valid_auth_code, throw
 
 
 @frappe.whitelist(allow_guest=True)

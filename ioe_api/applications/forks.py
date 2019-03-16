@@ -8,7 +8,7 @@
 from __future__ import unicode_literals
 import frappe
 from app_center.app_center.doctype.iot_application_version.iot_application_version import get_latest_version
-from ..helper import throw, as_dict
+from ioe_api.helper import throw, as_dict
 from .versions import copy_forked_app_files
 
 

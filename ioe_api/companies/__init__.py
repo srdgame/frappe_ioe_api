@@ -8,7 +8,7 @@
 from __future__ import unicode_literals
 import frappe
 from cloud.cloud.doctype.cloud_company.cloud_company import list_admin_companies
-from ..helper import valid_auth_code, get_post_json_data, throw, get_doc_as_dict, update_doc
+from ioe_api.helper import valid_auth_code, get_post_json_data, throw, get_doc_as_dict, update_doc
 
 
 @frappe.whitelist(allow_guest=True)

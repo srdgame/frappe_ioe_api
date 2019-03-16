@@ -12,7 +12,7 @@ import shutil
 from frappe.utils import get_files_path
 from werkzeug.utils import secure_filename
 from app_center.app_center.doctype.iot_application_version.iot_application_version import get_latest_version
-from ..helper import valid_auth_code, throw, as_dict, get_doc_as_dict
+from ioe_api.helper import valid_auth_code, throw, as_dict, get_doc_as_dict
 
 
 ALLOWED_EXTENSIONS = set(['csv', 'CSV', 'zip', 'ZIP', 'gz', 'GZ', 'tgz', 'TGZ'])

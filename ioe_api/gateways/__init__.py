@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 import frappe
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups as _list_user_groups
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
-from ..helper import valid_auth_code, get_post_json_data, throw, update_doc, as_dict
+from ioe_api.helper import valid_auth_code, get_post_json_data, throw, update_doc, as_dict
 
 
 @frappe.whitelist(allow_guest=True)

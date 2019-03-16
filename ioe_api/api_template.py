@@ -7,7 +7,7 @@
 
 from __future__ import unicode_literals
 import frappe
-from .helper import valid_auth_code, get_post_json_data, throw, as_dict, update_doc
+from ioe_api.helper import valid_auth_code, get_post_json_data, throw, as_dict, update_doc
 
 
 @frappe.whitelist(allow_guest=True)

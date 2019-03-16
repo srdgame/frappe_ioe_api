@@ -14,7 +14,7 @@ import datetime
 from frappe.utils import convert_utc_to_user_timezone
 from iot.iot.doctype.iot_hdb_settings.iot_hdb_settings import IOTHDBSettings
 from iot.device_api import send_action
-from ..helper import valid_auth_code, throw
+from ioe_api.helper import valid_auth_code, throw
 
 
 @frappe.whitelist(allow_guest=True)

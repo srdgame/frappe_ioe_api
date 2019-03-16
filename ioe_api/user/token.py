@@ -8,7 +8,7 @@
 from __future__ import unicode_literals
 import frappe
 import uuid
-from ..helper import throw
+from ioe_api.helper import throw
 
 
 @frappe.whitelist(allow_guest=True)

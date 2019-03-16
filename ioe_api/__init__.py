@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import frappe
-from .helper import valid_auth_code, throw
+from ioe_api.helper import valid_auth_code, throw
 
 __version__ = '0.0.1'
 

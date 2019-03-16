@@ -8,8 +8,8 @@
 from __future__ import unicode_literals
 import frappe
 import uuid
-from ..helper import throw
-from ..gateways import info as gateway_info
+from ioe_api.helper import throw
+from ioe_api.gateways import info as gateway_info
 
 
 @frappe.whitelist(allow_guest=True)

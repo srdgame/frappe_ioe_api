@@ -8,7 +8,7 @@
 from __future__ import unicode_literals
 import frappe
 from iot.iot.doctype.iot_device_activity.iot_device_activity import query_logs_by_device, count_logs_by_device, get_log_detail
-from ..helper import valid_auth_code, get_post_json_data, throw
+from ioe_api.helper import valid_auth_code, get_post_json_data, throw
 
 
 @frappe.whitelist(allow_guest=True)

@@ -10,7 +10,7 @@ import os
 import frappe
 from werkzeug.utils import secure_filename
 
-from ..helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict
+from ioe_api.helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict
 from .versions import get_app_release_path
 
 

@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import throw
 from six import string_types
-from ..helper import valid_auth_code, get_doc_as_dict
+from ioe_api.helper import valid_auth_code, get_doc_as_dict
 
 
 @frappe.whitelist(allow_guest=True)
