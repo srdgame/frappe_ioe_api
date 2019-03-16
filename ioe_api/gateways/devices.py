@@ -114,7 +114,7 @@ def data(gateway, name=None):
 		hs = client.hgetall(name)
 		device_data = []
 
-		if cfg.has_key("inputs"):
+		if "inputs" in cfg:
 			inputs = cfg.get("inputs")
 			for input in inputs:
 				input_name = input.get('name')
