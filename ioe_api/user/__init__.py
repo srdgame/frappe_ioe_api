@@ -113,6 +113,8 @@ def login(username, password):
 		if frappe.local.login_manager.user != username:
 			throw("username_password_not_matched")
 
+		frappe.local.login_manager.post_login()
+
 		token = frappe.sessions.get_csrf_token()
 		frappe.db.commit()
 
