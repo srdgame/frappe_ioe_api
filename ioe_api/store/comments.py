@@ -25,7 +25,7 @@ def list(app):
 		apps = []
 		filters = {"app": app}
 		for d in frappe.get_all("IOT Application Comment", "name", filters=filters, order_by="modified desc"):
-			apps.append(as_dict(frappe.get_doc("IOT Application Comment", d[0])))
+			apps.append(as_dict(frappe.get_doc("IOT Application Comment", d.name)))
 
 		frappe.response.update({
 			"ok": True,

@@ -49,7 +49,7 @@ def list():
 			if not company:
 				continue
 			if company in companies:
-				apps.append(as_dict(frappe.get_doc("IOT User Application", d[0])))
+				apps.append(as_dict(frappe.get_doc("IOT User Application", d.name)))
 
 		frappe.response.update({
 			"ok": True,

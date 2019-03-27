@@ -27,7 +27,7 @@ def list(*tags):
 		for d in frappe.get_all("IOT Application", "name", filters=filters, order_by="modified desc"):
 			for tag in frappe.get_value("IOT Application Tag", ["name", "tag"], {"parent": d[0]}):
 				if tag[0] in tags:
-					apps.append(as_dict(frappe.get_doc("IOT Application", d[0])))
+					apps.append(as_dict(frappe.get_doc("IOT Application", d.name)))
 
 		frappe.response.update({
 			"ok": True,

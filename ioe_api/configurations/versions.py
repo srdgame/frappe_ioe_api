@@ -25,7 +25,7 @@ def list(name):
 	try:
 		version_list = []
 		for d in frappe.get_all("IOT Application Conf Version", "name", {"conf": name}, order_by="modified desc"):
-			version_list.append(as_dict(frappe.get_doc("IOT Application Conf Version", d[0])))
+			version_list.append(as_dict(frappe.get_doc("IOT Application Conf Version", d.name)))
 
 		frappe.response.update({
 			"ok": True,

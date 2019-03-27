@@ -17,7 +17,7 @@ def list():
 		apps = []
 		filters = {"owner": frappe.session.user}
 		for d in frappe.get_all("IOT Application Conf", "name", filters=filters, order_by="modified desc"):
-			apps.append(as_dict(frappe.get_doc("IOT Application Conf", d[0])))
+			apps.append(as_dict(frappe.get_doc("IOT Application Conf", d.name)))
 
 		frappe.response.update({
 			"ok": True,
