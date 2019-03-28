@@ -29,11 +29,11 @@ def list(app, conf_type='Template', owner=None, tags=None):
 			filters.update({"owner": owner})
 		for d in frappe.get_all("IOT Application Conf", "name", filters=filters, order_by="modified desc"):
 			'''
-			for tag in frappe.get_value("IOT Application Tag", ["name", "tag"], {"parent": d[0]}):
+			for tag in frappe.get_value("IOT Application Conf Tag", ["name", "tag"], {"parent": d[0]}):
 				if tag[0] in tags:
-					apps.append(as_dict(frappe.get_doc("IOT Application", d.name)))
+					apps.append(as_dict(frappe.get_doc("IOT Application Conf", d.name)))
 			'''
-			apps.append(as_dict(frappe.get_doc("IOT Application Conf", d.name, keep_owner=True)))
+			apps.append(get_doc_as_dict("IOT Application Conf", d.name, keep_owner=True))
 
 		frappe.response.update({
 			"ok": True,

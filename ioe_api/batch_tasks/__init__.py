@@ -28,7 +28,7 @@ def list():
 
 		ret = []
 		for d in frappe.get_all("IOT Batch Task", {"owner_id": frappe.session.user}, order_by="modified desc"):
-			ret.append(get_doc_as_dict("IOT Batch Task", d[0]))
+			ret.append(get_doc_as_dict("IOT Batch Task", d.name))
 
 		frappe.response.update({
 			"ok": True,
