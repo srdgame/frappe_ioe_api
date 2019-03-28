@@ -20,7 +20,7 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def list(*tags, owner=None):
+def list(owner=None, tags=None):
 	try:
 		apps = []
 		if not owner:

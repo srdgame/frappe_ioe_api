@@ -20,7 +20,7 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def list(*tags, app, conf_type='Template', owner=None):
+def list(app, conf_type='Template', owner=None, tags=None):
 
 	try:
 		apps = []
