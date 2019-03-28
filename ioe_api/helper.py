@@ -50,24 +50,26 @@ def throw(err):
 	raise ApiError(err)
 
 
-def as_dict(doc, keep_modified=True):
+def as_dict(doc, keep_modified=True, keep_owner=False):
 	keep_data = _dict({
 		"name": doc.name
 	})
 	if keep_modified:
 		keep_data['modified'] = doc.modified
+	if keep_owner:
+		keep_data['owner'] = doc.owner
 
 	return doc.as_dict(no_default_fields=True).update(keep_data)
 
 
-def get_doc_as_dict(doc_type, name, keep_modified=True):
+def get_doc_as_dict(doc_type, name, keep_modified=True, keep_owner=False):
 	doc = None
 	try:
 		doc = frappe.get_doc(doc_type, name)
 	except Exception as ex:
 		throw("object_not_found")
 
-	return as_dict(doc, keep_modified=keep_modified)
+	return as_dict(doc, keep_modified=keep_modified, keep_owner=keep_owner)
 
 
 def update_doc(doc_type, d):
