@@ -189,7 +189,7 @@ def read(name):
 
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("IOT Application, Version", name)
+			"data": get_doc_as_dict("IOT Application Version", name)
 		})
 	except Exception as ex:
 		frappe.response.update({
