@@ -20,19 +20,20 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def list(*tags, owner=None):
+def list(*tags, app, conf_type='Template', owner=None):
+
 	try:
 		apps = []
-		if not owner:
-			owner = ["!=", "Administrator"]
-		filters = {"owner": owner, "published": 1}
-		for d in frappe.get_all("IOT Application", "name", filters=filters, order_by="modified desc"):
+		filters = {"app": app or frappe.session.user, "type": conf_type}
+		if owner:
+			filters.update({"owner": owner})
+		for d in frappe.get_all("IOT Application Conf", "name", filters=filters, order_by="modified desc"):
 			'''
 			for tag in frappe.get_value("IOT Application Tag", ["name", "tag"], {"parent": d[0]}):
 				if tag[0] in tags:
 					apps.append(as_dict(frappe.get_doc("IOT Application", d.name)))
 			'''
-			apps.append(as_dict(frappe.get_doc("IOT Application", d.name)))
+			apps.append(as_dict(frappe.get_doc("IOT Application Conf", d.name)))
 
 		frappe.response.update({
 			"ok": True,
@@ -50,7 +51,7 @@ def read(name):
 	try:
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("IOT Application", name)
+			"data": get_doc_as_dict("IOT Application Conf", name)
 		})
 	except Exception as ex:
 		frappe.response.update({

@@ -83,11 +83,11 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def list(name):
+def list(app):
 	try:
 		valid_auth_code()
 		version_list = []
-		for d in frappe.get_all("IOT Application Version", "name", {"app": name}, order_by="modified desc"):
+		for d in frappe.get_all("IOT Application Version", "name", {"app": app}, order_by="modified desc"):
 			version_list.append(as_dict(frappe.get_doc("IOT Application Version", d.name)))
 
 		frappe.response.update({
@@ -217,10 +217,10 @@ def remove(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def latest(name, beta=0):
+def latest(app, beta=0):
 	try:
 		valid_auth_code()
-		ver = get_latest_version(app=name, beta=beta)
+		ver = get_latest_version(app=app, beta=beta)
 		frappe.response.update({
 			"ok": True,
 			"data": ver

@@ -12,10 +12,10 @@ from ioe_api.helper import get_post_json_data, throw, as_dict, update_doc, get_d
 
 
 @frappe.whitelist()
-def list():
+def list(conf_type='Template'):
 	try:
 		apps = []
-		filters = {"owner": frappe.session.user}
+		filters = {"owner": frappe.session.user, "type": conf_type}
 		for d in frappe.get_all("IOT Application Conf", "name", filters=filters, order_by="modified desc"):
 			apps.append(as_dict(frappe.get_doc("IOT Application Conf", d.name)))
 
