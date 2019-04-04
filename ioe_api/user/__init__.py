@@ -222,8 +222,7 @@ def read():
 		frappe.response.update({
 			"ok": True,
 			"data": {
-				"name": user,
-				"csrf_token": csrf_token,
+				"name": user.name,
 				"groups": groups,
 				"companies": companies,
 				"email": user.email,
