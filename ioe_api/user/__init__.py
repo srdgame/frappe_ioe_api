@@ -74,7 +74,7 @@ def update_password(new_password, logout_all_sessions=0, key=None, old_password=
 		frappe.response.update({
 			"ok": True,
 			"result": ret,
-			"info": info
+			"info": "password_updated"
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -205,6 +205,7 @@ def update(name, email, phone, first_name, last_name):
 @frappe.whitelist(allow_guest=True)
 def read():
 	try:
+		valid_auth_code()
 		if 'Guest' == frappe.session.user:
 			frappe.response.update({
 				"ok": True,
