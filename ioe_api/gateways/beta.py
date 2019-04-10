@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import throw
 from ioe_api.helper import valid_auth_code, throw
+from iot.device_api import send_action
 
 
 @frappe.whitelist(allow_guest=True)
@@ -43,18 +44,22 @@ def read(gateway):
 
 
 @frappe.whitelist(allow_guest=True)
-def enable(gateway):
+def enable(gateway, beta=1):
 	try:
 		valid_auth_code()
 
 		device = frappe.get_doc('IOT Device', gateway)
 		if not device.has_permission("read"):
 			throw("has_no_permission")
-		device.set_use_beta()
+
+		if beta == 1:
+			device.set_use_beta()
+
+		ret = send_action("sys", action="enable/beta", device=gateway, data=str(beta))
 
 		frappe.response.update({
 			"ok": True,
-			"message": "set_use_beta_done"
+			"data": ret
 		})
 	except Exception as ex:
 		frappe.response.update({
