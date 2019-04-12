@@ -7,9 +7,13 @@
 
 from __future__ import unicode_literals
 import frappe
+import redis
+import json
+import uuid
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups as _list_user_groups
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
 from ioe_api.helper import valid_auth_code, get_post_json_data, throw, update_doc, as_dict
+from iot.device_api import send_action
 
 
 @frappe.whitelist(allow_guest=True)
@@ -191,6 +195,377 @@ def exec_result(id):
 		frappe.response.update({
 			"ok": True,
 			"data": 0 # TODO:
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+def fire_action(id, action, gateway, data):
+	try:
+		if id is None:
+			id = str(uuid.uuid1()).upper()
+		return send_action("sys", action=action, id=id, device=gateway, data=data)
+	except Exception as ex:
+		throw("exception")
+
+
+@frappe.whitelist(allow_guest=True)
+def upgrade(name, version, no_ack=1, skynet_version=None, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		data = {
+			"no_ack": no_ack,
+			"version": version
+		}
+		if skynet_version is not None:
+			data.update({
+				"skynet": {"version": skynet_version}
+			})
+
+		ret = fire_action(id=id, action="start", gateway=name, data=data)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def upgrade_ack(name, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="upgrade/ack", gateway=name, data={})
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def enable_data(name, enable=1, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="enable/data", gateway=name, data=enable)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def enable_data_one_short(name, duration=60, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="enable/data_one_short", gateway=name, data=duration)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def data_snapshot(name, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="data/snapshot", gateway=name, data={})
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def data_snapshot(name, id=None):
+	'''
+	Force device data snapshot
+	'''
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="data/snapshot", gateway=name, data={})
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def data_flush(name, id=None):
+	'''
+	Force flush buffered data
+	'''
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="data/flush", gateway=name, data={})
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def enable_log(name, duration=60, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="enable/log", gateway=name, data=duration)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def enable_comm(name, duration=60, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="enable/comm", gateway=name, data=duration)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def enable_stat(name, enable=1, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="enable/stat", gateway=name, data=enable)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+# Enable/Disable event upload, disable if min_level is minus number or it is the minimum event level
+@frappe.whitelist(allow_guest=True)
+def enable_event(name, min_level=1, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="enable/event", gateway=name, data=min_level)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+# Enable/Disable event upload, disable if min_level is minus number or it is the minimum event level
+@frappe.whitelist(allow_guest=True)
+def run_batch_script(name, script, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="batch_script", gateway=name, data=script)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def restart(name, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="restart", gateway=name, data={})
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def reboot(name, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="reboot", gateway=name, data={})
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def cloud_conf(name, data, id=None):
+	'''
+	Change IOT Device Cloud Settings, data example: {"ID": "IDIDIDIDIDID", "HOST": "ioe.symgrid.com", ...}
+		Valid keys: ID/CLOUD_ID/HOST/PORT/TIMEOUT/PKG_HOST_URL/CNF_HOST_URL/DATA_UPLOAD/DATA_UPLOAD_PERIOD/COV/COV_TTL
+	:return:
+	'''
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="cloud_conf", gateway=name, data=data)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def download_cfg(name, data, id=None):
+	'''
+	Download IOT Device CFG, data example: {"name": "deab2776ef", "host": "ioe.symgrid.com"}  host is optional
+	:return:
+	'''
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="cfg/download", gateway=name, data=data)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
 		})
 	except Exception as ex:
 		frappe.response.update({

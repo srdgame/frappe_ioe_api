@@ -7,6 +7,8 @@
 
 from __future__ import unicode_literals
 import frappe
+import json
+from six import text_type, string_types
 from iot.iot.doctype.iot_device_activity.iot_device_activity import query_logs_by_user, count_logs_by_user, get_log_detail
 from ioe_api.helper import valid_auth_code, get_post_json_data, throw
 
@@ -80,11 +82,15 @@ def read(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def dispose(name, disposed):
+def dispose(activities, disposed=1):
 	try:
 		valid_auth_code()
+
+		if isinstance(activities, string_types):
+			activities = json.loads(activities)
+
 		warns = []
-		for activity in name:
+		for activity in activities:
 			try:
 				doc = frappe.get_doc("IOT Device Activity", activity)
 				doc.dispose(disposed)

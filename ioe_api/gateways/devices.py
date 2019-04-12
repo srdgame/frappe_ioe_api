@@ -15,6 +15,7 @@ from frappe.utils import convert_utc_to_user_timezone
 from iot.iot.doctype.iot_hdb_settings.iot_hdb_settings import IOTHDBSettings
 from iot.device_api import send_action
 from ioe_api.helper import valid_auth_code, throw
+from ioe_api.gateways import fire_action
 
 
 @frappe.whitelist(allow_guest=True)
@@ -154,6 +155,31 @@ def data(gateway, name=None):
 
 
 @frappe.whitelist(allow_guest=True)
+def data_query(gateway, name, id=None):
+	'''
+	Force device data snapshot
+	:return:
+	'''
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="data/query", gateway=gateway, data=name)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
 def output(gateway, name, output, prop, value, id=None):
 	try:
 		valid_auth_code()
@@ -164,17 +190,21 @@ def output(gateway, name, output, prop, value, id=None):
 		if not id:
 			id = str(uuid.uuid1()).upper()
 
-		ret = send_action("output", id=id, device=gateway, data= {
-			"device": name,
-			"output": output,
-			"prop": prop,
-			"value": value
-		})
+		try:
+			ret = send_action("output", id=id, device=gateway, data= {
+				"device": name,
+				"output": output,
+				"prop": prop,
+				"value": value
+			})
 
-		frappe.response.update({
-			"ok": True,
-			"data": ret
-		})
+			frappe.response.update({
+				"ok": True,
+				"data": ret
+			})
+		except Exception as ex:
+			throw("exception")
+
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
@@ -193,16 +223,20 @@ def command(gateway, name, command, param=None, id=None):
 		if not id:
 			id = str(uuid.uuid1()).upper()
 
-		ret = send_action("command", id=id, device=gateway, data= {
-			"device": name,
-			"cmd": command,
-			"param": param,
-		})
+		try:
+			ret = send_action("command", id=id, device=gateway, data= {
+				"device": name,
+				"cmd": command,
+				"param": param,
+			})
 
-		frappe.response.update({
-			"ok": True,
-			"data": ret
-		})
+			frappe.response.update({
+				"ok": True,
+				"data": ret
+			})
+		except Exception as ex:
+			throw("exception")
+
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
