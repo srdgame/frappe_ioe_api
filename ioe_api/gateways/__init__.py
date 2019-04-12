@@ -10,6 +10,7 @@ import frappe
 import redis
 import json
 import uuid
+from six import text_type, string_types
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups as _list_user_groups
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
 from ioe_api.helper import valid_auth_code, get_post_json_data, throw, update_doc, as_dict
@@ -159,8 +160,13 @@ def update():
 
 
 @frappe.whitelist(allow_guest=True)
-def remove(*devices):
+def remove(devices):
 	try:
+		valid_auth_code()
+
+		if isinstance(devices, string_types):
+			devices = json.loads(devices)
+
 		warns = []
 		devices = devices or (get_post_json_data()['name'])
 		for sn in devices:
@@ -307,30 +313,6 @@ def enable_data_one_short(name, duration=60, id=None):
 
 @frappe.whitelist(allow_guest=True)
 def data_snapshot(name, id=None):
-	try:
-		valid_auth_code()
-		doc = frappe.get_doc('IOT Device', name)
-		if not doc.has_permission("write"):
-			throw("has_no_permission")
-
-		ret = fire_action(id=id, action="data/snapshot", gateway=name, data={})
-
-		frappe.response.update({
-			"ok": True,
-			"data": ret
-		})
-	except Exception as ex:
-		frappe.response.update({
-			"ok": False,
-			"error": str(ex)
-		})
-
-
-@frappe.whitelist(allow_guest=True)
-def data_snapshot(name, id=None):
-	'''
-	Force device data snapshot
-	'''
 	try:
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', name)
@@ -550,7 +532,7 @@ def cloud_conf(name, data, id=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def download_cfg(name, data, id=None):
+def download_cfg(name, cfg_name, host=None, id=None):
 	'''
 	Download IOT Device CFG, data example: {"name": "deab2776ef", "host": "ioe.symgrid.com"}  host is optional
 	:return:
@@ -561,7 +543,38 @@ def download_cfg(name, data, id=None):
 		if not doc.has_permission("write"):
 			throw("has_no_permission")
 
+		data={"name": cfg_name}
+		if host is not None:
+			data.update({"host": host})
 		ret = fire_action(id=id, action="cfg/download", gateway=name, data=data)
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def upload_cfg(name, host=None, id=None):
+	'''
+	Download IOT Device CFG, data example: {"host": "ioe.symgrid.com"}  host is optional
+	:return:
+	'''
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', name)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		data = {}
+		if host is not None:
+			data.update({"host": host})
+		ret = fire_action(id=id, action="cfg/upload", gateway=name, data=data)
 
 		frappe.response.update({
 			"ok": True,
