@@ -82,7 +82,10 @@ def dispose(events, disposed=1):
 		valid_auth_code()
 
 		if isinstance(events, string_types):
-			events = json.loads(events)
+			if events[0] == '[':
+				events = json.loads(events)
+			else:
+				events = [events]
 
 		warns = []
 		for activity in events:
