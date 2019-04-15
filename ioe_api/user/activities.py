@@ -82,15 +82,13 @@ def read(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def dispose(activities, disposed=1):
+def dispose():
 	try:
 		valid_auth_code()
 
-		if isinstance(activities, string_types):
-			if activities[0] == '[':
-				activities = json.loads(activities)
-			else:
-				activities = [activities]
+		postdata = get_post_json_data()
+		activities = postdata['activities'] or {}
+		disposed = postdata['disposed'] or 1
 
 		warns = []
 		for activity in activities:

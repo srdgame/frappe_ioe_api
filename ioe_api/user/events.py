@@ -10,7 +10,7 @@ import frappe
 import json
 from six import text_type, string_types
 from iot.iot.doctype.iot_device_event.iot_device_event import count_device_event_by_user, query_device_event_by_user, get_event_detail
-from ioe_api.helper import valid_auth_code, throw
+from ioe_api.helper import valid_auth_code, throw, get_post_json_data
 
 
 @frappe.whitelist(allow_guest=True)
@@ -77,20 +77,18 @@ def read(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def dispose(events, disposed=1):
+def dispose():
 	try:
 		valid_auth_code()
 
-		if isinstance(events, string_types):
-			if events[0] == '[':
-				events = json.loads(events)
-			else:
-				events = [events]
+		postdata = get_post_json_data()
+		events = postdata['events'] or {}
+		disposed = postdata['disposed'] or 1
 
 		warns = []
-		for activity in events:
+		for event in events:
 			try:
-				doc = frappe.get_doc("IOT Device Event", activity)
+				doc = frappe.get_doc("IOT Device Event", event)
 				doc.dispose(disposed)
 			except Exception as ex:
 				warns.append(str(ex))
