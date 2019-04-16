@@ -14,7 +14,7 @@ from six import text_type, string_types
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups as _list_user_groups
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
 from ioe_api.helper import valid_auth_code, get_post_json_data, throw, update_doc, as_dict
-from iot.device_api import send_action
+from iot.device_api import send_action, get_action_result
 
 
 @frappe.whitelist(allow_guest=True)
@@ -198,9 +198,18 @@ def exec_result(id):
 	try:
 		valid_auth_code()
 
+		try:
+			result = get_action_result(id)
+		except Exception as ex:
+			frappe.response.update({
+				"ok": False,
+				"error": "exception",
+				"exception": str(ex)
+			})
+
 		frappe.response.update({
 			"ok": True,
-			"data": 0 # TODO:
+			"data": result
 		})
 	except Exception as ex:
 		frappe.response.update({
