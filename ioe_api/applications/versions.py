@@ -144,7 +144,7 @@ def create():
 			Check version file (and automatically correct it?) Only for user application
 			'''
 			if ext_wanted == 'zip':
-				from editor import editor_revert, editor_worksapce_version, editor_release
+				from app_center.editor import editor_revert, editor_worksapce_version, editor_release
 				editor_revert(app, version, False)
 				got_ver = editor_worksapce_version(app)
 				if got_ver != version:
