@@ -24,7 +24,7 @@ def list(app, conf_type='Template', owner=None, tags=None):
 
 	try:
 		apps = []
-		filters = {"app": app or frappe.session.user, "type": conf_type}
+		filters = {"app": app, "type": conf_type, "public": 1}
 		if owner:
 			filters.update({"owner": owner})
 		for d in frappe.get_all("IOT Application Conf", "name", filters=filters, order_by="modified desc"):
