@@ -36,8 +36,7 @@ def create():
 		data = get_post_json_data()
 		data.update({
 			"doctype": "IOT Application Conf",
-			"owner": frappe.session.user,
-			"public": 0
+			"owner": frappe.session.user
 		})
 
 		doc = frappe.get_doc(data).insert()
