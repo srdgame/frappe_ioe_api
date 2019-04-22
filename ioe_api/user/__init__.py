@@ -236,4 +236,3 @@ def read():
 			"ok": False,
 			"error": str(ex)
 		})
-
