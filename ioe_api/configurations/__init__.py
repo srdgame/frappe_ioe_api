@@ -36,8 +36,11 @@ def create():
 		data = get_post_json_data()
 		data.update({
 			"doctype": "IOT Application Conf",
-			"owner": frappe.session.user
 		})
+		if data.get('owner_type') != 'Cloud Company Group':
+			data.update({
+				"owner_id": frappe.session.user
+			})
 
 		doc = frappe.get_doc(data).insert()
 
