@@ -80,7 +80,7 @@ def save_app_icon(app, f):
 @frappe.whitelist()
 def icon():
 	try:
-		name = frappe.dict.name
+		name = frappe.form_dict.app_name
 		try:
 			doc = frappe.get_doc("IOT Application", name)
 		except Exception as ex:
