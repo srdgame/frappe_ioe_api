@@ -86,11 +86,13 @@ def icon():
 		except Exception as ex:
 			throw("app_not_found")
 
-		f = frappe.request.files.get('icon_file')  # 从表单的file字段获取文件，app_file为该表单的name值
-		if f:
-			file_path = save_app_icon(name, f)
-			doc.set("icon_image", file_path)
-			doc.save()
+		f = frappe.request.files.get('file')  # 从表单的file字段获取文件，app_file为该表单的name值
+		if not f:
+			throw("icon_file_not_found")
+
+		file_path = save_app_icon(name, f)
+		doc.set("icon_image", file_path)
+		doc.save()
 
 		frappe.response.update({
 			"ok": True,
