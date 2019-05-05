@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 import frappe
 import uuid
 from ioe_api.helper import throw
-from ioe_api.gateways import info as gateway_info
+from ioe_api.gateways import read as gateway_read
 
 
 @frappe.whitelist(allow_guest=True)
@@ -63,7 +63,7 @@ def create():
 def read(name):
 	try:
 		doc = frappe.get_doc("IOT Virtual Device", name)
-		return gateway_info(name)
+		return gateway_read(name)
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
