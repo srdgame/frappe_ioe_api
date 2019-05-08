@@ -160,15 +160,14 @@ def update():
 
 
 @frappe.whitelist(allow_guest=True)
-def remove(devices):
+def remove():
 	try:
 		valid_auth_code()
 
-		if isinstance(devices, string_types):
-			devices = json.loads(devices)
-
 		warns = []
-		devices = devices or (get_post_json_data()['name'])
+		devices = (get_post_json_data()['name'])
+		if isinstance(devices, string_types):
+			devices = [devices]
 		for sn in devices:
 			try:
 				doc = frappe.get_doc("IOT Device", sn)
