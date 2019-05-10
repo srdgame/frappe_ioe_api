@@ -77,7 +77,7 @@ def list():
 
 
 @frappe.whitelist(allow_guest=True)
-def create(name, device_name, description, owner_type='User', owner_id=None):
+def create(name, dev_name, description, owner_type='User', owner_id=None):
 	try:
 		valid_auth_code()
 		# Valid the device owner
@@ -104,7 +104,7 @@ def create(name, device_name, description, owner_type='User', owner_id=None):
 				if iot_device.owner_id != owner_id or iot_device.owner_type != owner_type:
 					throw("device_owner_error")
 
-			iot_device.set("dev_name", device_name)
+			iot_device.set("dev_name", dev_name)
 			iot_device.set("description", description)
 			iot_device.update_owner(owner_type, owner_id)
 			iot_device.save()
