@@ -243,7 +243,7 @@ def upgrade(name, version, no_ack=1, skynet_version=None, id=None):
 				"skynet": {"version": skynet_version}
 			})
 
-		ret = fire_action(id=id, action="start", gateway=name, data=data)
+		ret = fire_action(id=id, action="upgrade", gateway=name, data=data)
 
 		frappe.response.update({
 			"ok": True,
