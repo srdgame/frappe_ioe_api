@@ -90,7 +90,7 @@ def list(app, beta=1):
 		filters = {
 			"app": app
 		}
-		if beta == 0:
+		if int(beta) == 0:
 			filters.update({"beta": 0})
 
 		for d in frappe.get_all("IOT Application Version", "name", filters, order_by="modified desc"):
