@@ -12,6 +12,7 @@ import json
 import uuid
 from six import text_type, string_types
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups as _list_user_groups
+from cloud.cloud.doctype.cloud_company_group.cloud_company_group import is_user_in_group as _is_user_in_group
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
 from ioe_api.helper import valid_auth_code, get_post_json_data, throw, update_doc, as_dict
 from iot.device_api import send_action, get_action_result
@@ -90,7 +91,7 @@ def create(name, dev_name, description, owner_type='User', owner_id=None):
 					frappe.logger(__name__).error(ex)
 					throw("owner_id_fetch_error")
 			else:
-				if owner_id not in _list_user_groups(frappe.session.user):
+				if not _is_user_in_group(owner_id, frappe.session.user):
 					throw("owner_id_invalid")
 		else:
 			# if owner_type == 'User':
