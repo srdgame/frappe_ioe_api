@@ -13,7 +13,7 @@ from .versions import copy_forked_app_files
 
 
 @frappe.whitelist()
-def create(name, version=0, pre_conf=""):
+def create(name, version=0, pre_conf=None):
 	try:
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
@@ -21,7 +21,6 @@ def create(name, version=0, pre_conf=""):
 		version = int(version)
 		if version == 0:
 			version = get_latest_version(name, beta=1)
-		pre_conf = str(pre_conf)
 
 		if not frappe.get_value('IOT Application Version', {"app": name, "version": version}, "name"):
 			throw("version_not_exists")
