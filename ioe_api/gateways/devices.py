@@ -127,6 +127,7 @@ def data(gateway, name=None):
 						"tm": '',
 						"q": -1,
 						"vt": input.get('vt'),
+						"unit": input.get('unit'),
 					})
 				else:
 					val = json.loads(hs.get(input_name + "/value"))
@@ -140,7 +141,8 @@ def data(gateway, name=None):
 						"tm": time_str,
 						"q": val[2],
 						"vt": input.get('vt'),
-						"desc": input.get("desc")
+						"desc": input.get("desc"),
+						"unit": input.get('unit'),
 					})
 
 		frappe.response.update({
