@@ -86,7 +86,7 @@ def refresh(gateway, id=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def install(gateway, app, version, inst, conf, id=None):
+def install(gateway, app, version, inst, conf, id=None, from_web=None):
 	try:
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
@@ -99,6 +99,8 @@ def install(gateway, app, version, inst, conf, id=None):
 			"version": version,
 			"conf": conf
 		}
+		if from_web is not None:
+			data.update({"from_web": 1})
 		ret = fire_action(id=id, action="install", gateway=gateway, data=data)
 
 		frappe.response.update({
