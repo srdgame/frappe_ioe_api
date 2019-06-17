@@ -32,7 +32,7 @@ def create(name, version=0, pre_conf=None):
 
 		frappe.response.update({
 			"ok": True,
-			"message": as_dict(forked_doc)
+			"data": as_dict(forked_doc)
 		})
 	except Exception as ex:
 		frappe.response.update({
