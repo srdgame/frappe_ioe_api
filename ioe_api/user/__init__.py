@@ -56,7 +56,7 @@ def create(email, full_name, redirect_to=None):
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def update_password(new_password, logout_all_sessions=0, key=None, old_password=None):
 	try:
 		user = frappe.session.user
