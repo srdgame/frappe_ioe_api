@@ -49,7 +49,7 @@ def create():
 		data.update({
 			"doctype": "IOT Application",
 			"owner": frappe.session.user,
-			"published": 0
+			# "published": 0
 		})
 
 		doc = frappe.get_doc(data).insert()
