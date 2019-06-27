@@ -231,7 +231,10 @@ def latest(app, beta=0):
 		ver = get_latest_version(app=app, beta=beta)
 		frappe.response.update({
 			"ok": True,
-			"data": ver
+			"data": {
+				"version": ver,
+				"beta": frappe.get_value('IOT Application Version', {"app": app, "version": ver}, "beta")
+			}
 		})
 	except Exception as ex:
 		frappe.response.update({
