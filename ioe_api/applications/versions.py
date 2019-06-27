@@ -231,10 +231,23 @@ def latest(app, beta=0):
 		ver = get_latest_version(app=app, beta=beta)
 		frappe.response.update({
 			"ok": True,
-			"data": {
-				"version": ver,
-				"beta": frappe.get_value('IOT Application Version', {"app": app, "version": ver}, "beta")
-			}
+			"data": ver
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def beta(app, version):
+	try:
+		valid_auth_code()
+		beta = frappe.get_value('IOT Application Version', {"app": app, "version": version}, "beta")
+		frappe.response.update({
+			"ok": True,
+			"data": beta
 		})
 	except Exception as ex:
 		frappe.response.update({
