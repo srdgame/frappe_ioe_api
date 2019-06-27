@@ -60,9 +60,10 @@ def create(group, nickname, enabled=1):
 @frappe.whitelist(allow_guest=True)
 def read(user=None):
 	try:
+		valid_auth_code()
+
 		user = user or frappe.session.user
 		name = frappe.get_value('App Developer', user)
-		valid_auth_code()
 
 		if not name:
 			throw("not_developer")

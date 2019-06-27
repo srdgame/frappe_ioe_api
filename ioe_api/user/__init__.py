@@ -132,7 +132,8 @@ def login(username, password):
 				"email": doc.email,
 				"phone": doc.phone,
 				"first_name": doc.first_name,
-				"last_name": doc.last_name
+				"last_name": doc.last_name,
+				"is_developer": frappe.get_value("App Developer", frappe.session.user, "enabled")
 			}
 		})
 	except Exception as ex:
