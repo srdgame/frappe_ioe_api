@@ -104,3 +104,24 @@ def upgrade(gateway, extension, version, id=None):
 			"ok": False,
 			"error": str(ex)
 		})
+
+
+@frappe.whitelist(allow_guest=True)
+def auto_clean(gateway, id=None):
+	try:
+		valid_auth_code()
+		doc = frappe.get_doc('IOT Device', gateway)
+		if not doc.has_permission("write"):
+			throw("has_no_permission")
+
+		ret = fire_action(id=id, action="ext/auto_clean", gateway=gateway, data={})
+
+		frappe.response.update({
+			"ok": True,
+			"data": ret
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
