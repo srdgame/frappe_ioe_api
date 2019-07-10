@@ -127,6 +127,7 @@ def data(gateway, name=None):
 						"tm": '',
 						"q": -1,
 						"vt": input.get('vt'),
+						"desc": input.get("desc"),
 						"unit": input.get('unit'),
 					})
 				else:
