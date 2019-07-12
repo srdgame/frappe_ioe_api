@@ -228,8 +228,11 @@ def fire_action(id, action, gateway, data):
 
 
 @frappe.whitelist(allow_guest=True)
-def upgrade(name, version, no_ack=1, skynet_version=None, id=None):
+def upgrade(name, version=None, no_ack=1, skynet_version=None, id=None):
 	try:
+		if not version and not skynet_version:
+			throw("version_missing")
+
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', name)
 		if not doc.has_permission("write"):
