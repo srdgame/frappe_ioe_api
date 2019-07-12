@@ -240,8 +240,11 @@ def upgrade(name, version=None, no_ack=1, skynet_version=None, id=None):
 
 		data = {
 			"no_ack": no_ack,
-			"version": version
 		}
+		if version is not None:
+			data.update({
+				"version": version
+			})
 		if skynet_version is not None:
 			data.update({
 				"skynet": {"version": skynet_version}
