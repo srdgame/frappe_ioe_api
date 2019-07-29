@@ -20,9 +20,10 @@ def test():
 	})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def list(conf):
 	try:
+		valid_auth_code()
 		version_list = []
 		for d in frappe.get_all("IOT Application Conf Version", "name", {"conf": conf}, order_by="modified desc"):
 			version_list.append(as_dict(frappe.get_doc("IOT Application Conf Version", d.name)))
@@ -38,9 +39,10 @@ def list(conf):
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def create(name, version, data, comment):
 	try:
+		valid_auth_code()
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
 
@@ -63,9 +65,10 @@ def create(name, version, data, comment):
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def read(name):
 	try:
+		valid_auth_code()
 		frappe.response.update({
 			"ok": True,
 			"data": get_doc_as_dict("IOT Application Conf Version", name)
@@ -93,9 +96,10 @@ def latest(conf):
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def remove(name):
 	try:
+		valid_auth_code()
 		frappe.delete_doc("IOT Application Conf Version", name)
 		frappe.response.update({
 			"ok": True,

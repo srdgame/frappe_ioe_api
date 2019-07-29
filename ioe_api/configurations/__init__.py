@@ -8,12 +8,12 @@
 from __future__ import unicode_literals
 import frappe
 
-from ioe_api.helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict
+from ioe_api.helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict, valid_auth_code
 
-
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def list(conf_type='Template'):
 	try:
+		valid_auth_code()
 		apps = []
 		filters = {"owner": frappe.session.user, "type": conf_type}
 		for d in frappe.get_all("IOT Application Conf", "name", filters=filters, order_by="modified desc"):
@@ -30,9 +30,10 @@ def list(conf_type='Template'):
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def create():
 	try:
+		valid_auth_code()
 		data = get_post_json_data()
 		data.update({
 			"doctype": "IOT Application Conf",
@@ -55,9 +56,10 @@ def create():
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def read(name):
 	try:
+		valid_auth_code()
 		frappe.response.update({
 			"ok": True,
 			"data": get_doc_as_dict("IOT Application Conf", name, keep_owner=True)
@@ -69,9 +71,10 @@ def read(name):
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def update():
 	try:
+		valid_auth_code()
 		data = get_post_json_data()
 		update_doc("IOT Application Conf", data)
 		frappe.response.update({
@@ -85,9 +88,10 @@ def update():
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def remove(name):
 	try:
+		valid_auth_code()
 		owner = frappe.get_value("IOT Application Conf", name, "owner")
 		if not owner:
 			throw("configuration_not_found")
