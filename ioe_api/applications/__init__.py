@@ -10,7 +10,7 @@ import os
 import frappe
 from werkzeug.utils import secure_filename
 
-from ioe_api.helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict
+from ioe_api.helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict, valid_auth_code
 from .versions import get_app_release_path
 
 
@@ -23,9 +23,10 @@ def test():
 	})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def list():
 	try:
+		valid_auth_code()
 		apps = []
 		filters = {"owner": frappe.session.user}
 		for d in frappe.get_all("IOT Application", "name", filters=filters, order_by="modified desc"):
@@ -42,9 +43,10 @@ def list():
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def create():
 	try:
+		valid_auth_code()
 		data = get_post_json_data()
 		data.update({
 			"doctype": "IOT Application",
@@ -80,6 +82,7 @@ def save_app_icon(app, f):
 @frappe.whitelist()
 def icon():
 	try:
+		valid_auth_code()
 		name = frappe.form_dict.name
 		try:
 			doc = frappe.get_doc("IOT Application", name)
@@ -105,9 +108,10 @@ def icon():
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def read(name):
 	try:
+		valid_auth_code()
 		frappe.response.update({
 			"ok": True,
 			"data": get_doc_as_dict("IOT Application", name, keep_owner=True)
@@ -119,9 +123,10 @@ def read(name):
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def update():
 	try:
+		valid_auth_code()
 		data = get_post_json_data()
 		update_doc("IOT Application", data)
 		frappe.response.update({
@@ -135,9 +140,10 @@ def update():
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def remove(name):
 	try:
+		valid_auth_code()
 		owner = frappe.get_value("IOT Application", name, "owner")
 		if not owner:
 			throw("application_not_found")
