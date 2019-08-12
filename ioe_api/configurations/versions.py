@@ -40,7 +40,7 @@ def list(conf):
 
 
 @frappe.whitelist(allow_guest=True)
-def create(name, version, data, comment):
+def create(conf, version, data, comment):
 	try:
 		valid_auth_code()
 		if frappe.request.method != "POST":
@@ -48,7 +48,7 @@ def create(name, version, data, comment):
 
 		doc = frappe.get_doc({
 			"doctype": "IOT Application Conf Version",
-			"conf": name,
+			"conf": conf,
 			"version": version,
 			"data": data,
 			"comment": comment
