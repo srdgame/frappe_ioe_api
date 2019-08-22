@@ -97,21 +97,22 @@ def create(name, dev_name, description, owner_type='User', owner_id=None):
 			# if owner_type == 'User':
 			owner_id = frappe.session.user
 
+		iot_device = None
 		try:
 			# Update device name, description and owner stuff
 			iot_device = frappe.get_doc("IOT Device", name)
-
-			if iot_device.owner_id:
-				if iot_device.owner_id != owner_id or iot_device.owner_type != owner_type:
-					throw("device_owner_error")
-
-			iot_device.set("dev_name", dev_name)
-			iot_device.set("description", description)
-			iot_device.update_owner(owner_type, owner_id)
-			iot_device.save()
 		except Exception as ex:
 			frappe.logger(__name__).error(ex)
 			throw("gateway_id_invalid")
+
+		if iot_device.owner_id:
+			if iot_device.owner_id != owner_id or iot_device.owner_type != owner_type:
+				throw("device_owned_by_others")
+
+		iot_device.set("dev_name", dev_name)
+		iot_device.set("description", description)
+		iot_device.update_owner(owner_type, owner_id)
+		iot_device.save()
 
 		frappe.response.update({
 			"ok": True,
