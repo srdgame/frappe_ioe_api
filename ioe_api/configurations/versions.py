@@ -25,7 +25,7 @@ def list(conf):
 	try:
 		valid_auth_code()
 		version_list = []
-		for d in frappe.get_all("IOT Application Conf Version", "name", {"conf": conf}, order_by="modified desc"):
+		for d in frappe.get_all("IOT Application Conf Version", "name", {"conf": conf}, order_by="version desc"):
 			version_list.append(as_dict(frappe.get_doc("IOT Application Conf Version", d.name)))
 
 		frappe.response.update({

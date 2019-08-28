@@ -95,7 +95,7 @@ def list(app, beta=1, start_version=0):
 		if int(start_version) > 0:
 			filters.update({"version": ['>=', int(start_version)]})
 
-		for d in frappe.get_all("IOT Application Version", "name", filters, order_by="modified desc"):
+		for d in frappe.get_all("IOT Application Version", "name", filters, order_by="version desc"):
 			version_list.append(as_dict(frappe.get_doc("IOT Application Version", d.name)))
 
 		frappe.response.update({
