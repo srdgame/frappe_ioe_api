@@ -99,8 +99,12 @@ def remove(name):
 		if owner != frappe.session.user:
 			throw("not_configuration_owner")
 
-		# TODO: remove application not implemented so far
-		throw("contact_admin")
+		if frappe.get_value("IOT Application Conf", name, "public") == 1:
+			throw("public_application_conf_cannot_be_deleted!")
+
+		doc = frappe.get_doc("IOT Application Conf", name)
+		doc.clean_before_delete()
+		frappe.delete_doc("IOT Application Conf", name)
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
