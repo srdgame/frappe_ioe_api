@@ -10,6 +10,7 @@ import frappe
 
 from ioe_api.helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict, valid_auth_code
 
+
 @frappe.whitelist(allow_guest=True)
 def list(order_by="modified desc"):
 	try:
@@ -30,7 +31,7 @@ def list(order_by="modified desc"):
 
 
 @frappe.whitelist(allow_guest=True)
-def create(group, nickname, enabled=1):
+def create():
 	try:
 		valid_auth_code()
 
@@ -38,9 +39,7 @@ def create(group, nickname, enabled=1):
 		data.update({
 			"doctype": "App Developer",
 			"user": frappe.session.user,
-			"group": group,
-			"nickname": nickname,
-			"enabled": enabled
+			"enabled": 1
 		})
 
 		doc = frappe.get_doc(data).insert()
@@ -54,7 +53,6 @@ def create(group, nickname, enabled=1):
 			"ok": False,
 			"error": str(ex)
 		})
-
 
 
 @frappe.whitelist(allow_guest=True)
@@ -82,6 +80,7 @@ def read(user=None):
 @frappe.whitelist(allow_guest=True)
 def update():
 	try:
+		valid_auth_code()
 		data = get_post_json_data()
 		update_doc("App Developer", data)
 		frappe.response.update({

@@ -85,6 +85,8 @@ def read(name):
 @frappe.whitelist(allow_guest=True)
 def update(name, full_name, address, contact):
 	try:
+		valid_auth_code()
+
 		update_doc("Cloud Company", {
 			"name": name,
 			"full_name": full_name,
@@ -105,6 +107,8 @@ def update(name, full_name, address, contact):
 @frappe.whitelist(allow_guest=True)
 def remove(name):
 	try:
+		valid_auth_code()
+
 		update_doc("Cloud Company", {
 			"enabled": 0
 		})

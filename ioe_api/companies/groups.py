@@ -93,6 +93,7 @@ def read(name):
 @frappe.whitelist(allow_guest=True)
 def update(name, group_name, description, enabled=1):
 	try:
+		valid_auth_code()
 		if 'Company Admin' in frappe.get_roles(frappe.session.user):
 			throw("only_admin_can_update_group")
 
@@ -116,6 +117,7 @@ def update(name, group_name, description, enabled=1):
 @frappe.whitelist(allow_guest=True)
 def remove(name):
 	try:
+		valid_auth_code()
 		if 'Company Admin' in frappe.get_roles(frappe.session.user):
 			throw("only_admin_can_remove_group")
 
