@@ -126,12 +126,14 @@ def login(username, password):
 		frappe.response.update({
 			"ok": True,
 			"data": {
-				"name": username,
+				"name": frappe.session.user,
+				"username": doc.username,
 				"csrf_token": token,
 				"groups": groups,
 				"companies": companies,
 				"email": doc.email,
 				"phone": doc.phone,
+				"mobile_no": doc.mobile_no,
 				"first_name": doc.first_name,
 				"last_name": doc.last_name,
 				"is_developer": frappe.get_value("App Developer", frappe.session.user, "enabled")
@@ -179,7 +181,7 @@ def logout():
 
 
 @frappe.whitelist()
-def update(name, email, phone, first_name, last_name):
+def update(name, email, phone, first_name, last_name, username=None, mobile_no=None):
 	try:
 		if 'Guest' == frappe.session.user:
 			throw("no_permission")
@@ -191,6 +193,14 @@ def update(name, email, phone, first_name, last_name):
 			"first_name": first_name,
 			"last_name": last_name
 		})
+		if username:
+			user.update({
+				"username": username
+			})
+		if mobile_no:
+			user.update({
+				"mobile_no": mobile_no
+			})
 		user.save()
 
 		frappe.response.update({
@@ -225,10 +235,12 @@ def read():
 			"ok": True,
 			"data": {
 				"name": user.name,
+				"username": user.username,
 				"groups": groups,
 				"companies": companies,
 				"email": user.email,
 				"phone": user.phone,
+				"mobile_no": user.mobile_no,
 				"first_name": user.first_name,
 				"last_name": user.last_name
 			}
