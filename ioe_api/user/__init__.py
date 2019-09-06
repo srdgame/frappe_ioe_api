@@ -109,8 +109,9 @@ def reset_password(email):
 @frappe.whitelist(allow_guest=True)
 def login(username, password):
 	try:
-		frappe.local.login_manager.authenticate(username, password)
-		if frappe.local.login_manager.user != username:
+		try:
+			frappe.local.login_manager.authenticate(username, password)
+		except Exception as ex:
 			throw("username_password_not_matched")
 
 		frappe.local.login_manager.post_login()
