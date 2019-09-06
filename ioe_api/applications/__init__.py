@@ -157,6 +157,10 @@ def remove(name):
 		doc = frappe.get_doc("IOT Application", name)
 		doc.clean_before_delete()
 		frappe.delete_doc("IOT Application", name)
+		frappe.response.update({
+			"ok": True,
+			"message": "application_removed"
+		})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
