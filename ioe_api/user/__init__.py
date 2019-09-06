@@ -123,6 +123,10 @@ def login(username, password):
 		groups = list_user_groups(username)
 		doc = frappe.get_doc("User", frappe.session.user)
 
+		is_admin = 0
+		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+			is_admin = 1
+
 		frappe.response.update({
 			"ok": True,
 			"data": {
@@ -136,6 +140,7 @@ def login(username, password):
 				"mobile_no": doc.mobile_no,
 				"first_name": doc.first_name,
 				"last_name": doc.last_name,
+				"is_admin": is_admin,
 				"is_developer": frappe.get_value("App Developer", frappe.session.user, "enabled")
 			}
 		})
@@ -231,6 +236,10 @@ def read():
 		companies = list_user_companies(frappe.session.user)
 		groups = list_user_groups(frappe.session.user)
 
+		is_admin = 0
+		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+			is_admin = 1
+
 		frappe.response.update({
 			"ok": True,
 			"data": {
@@ -242,7 +251,9 @@ def read():
 				"phone": user.phone,
 				"mobile_no": user.mobile_no,
 				"first_name": user.first_name,
-				"last_name": user.last_name
+				"last_name": user.last_name,
+				"is_admin": is_admin,
+				"is_developer": frappe.get_value("App Developer", frappe.session.user, "enabled")
 			}
 		})
 	except Exception as ex:
