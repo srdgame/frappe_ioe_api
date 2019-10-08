@@ -7,8 +7,9 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 from frappe.handler import logout as frappe_logout
-from frappe.core.doctype.user.user import sign_up, reset_password as _reset_password, update_password as _update_password
+from frappe.core.doctype.user.user import sign_up, update_password as _update_password
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups
 from ioe_api.helper import valid_auth_code, throw
@@ -82,6 +83,31 @@ def update_password(new_password, logout_all_sessions=0, key=None, old_password=
 			"error": 'exception',
 			"exception": str(ex),
 		})
+
+
+def _reset_password(user):
+	if user == "Administrator":
+		return 'not allowed'
+
+	try:
+		user = frappe.get_doc("User", user)
+		if not user.enabled:
+			return 'disabled'
+
+		user.validate_reset_password()
+		user.reset_password(send_email=False)
+
+		key = user.db_get('reset_password_key')
+
+		url = "https://cloud.thingsroot.com/update-password?key=" + key
+
+		user.password_reset_mail(url)
+
+		return frappe.msgprint(_("Password reset instructions have been sent to your email"))
+
+	except frappe.DoesNotExistError:
+		frappe.clear_messages()
+		return 'not found'
 
 
 @frappe.whitelist(allow_guest=True)
