@@ -111,8 +111,7 @@ def create(name, dev_name, description, owner_type='User', owner_id=None):
 
 		iot_device.set("dev_name", dev_name)
 		iot_device.set("description", description)
-		iot_device.update_owner(owner_type, owner_id)
-		iot_device.save()
+		iot_device.update_owner(owner_type, owner_id, ignore_permissions=True)
 
 		frappe.response.update({
 			"ok": True,
