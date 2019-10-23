@@ -20,18 +20,18 @@ def test():
 
 
 
-def list_company_groups(company):
+def list_company_shared_groups(company):
 	if 'Company Admin' in frappe.get_roles(frappe.session.user):
 		return []
 
-	return [d[0] for d in frappe.db.get_values("Cloud Company Group", {"company": company, "enabled": 1}, "name")]
+	return [d[0] for d in frappe.db.get_values("IOT Share Group", {"company": company}, "name")]
 
 
 @frappe.whitelist(allow_guest=True)
 def list(company):
 	try:
 		valid_auth_code()
-		data = list_company_groups(company)
+		data = list_company_shared_groups(company)
 
 		frappe.response.update({
 			"ok": True,
@@ -59,7 +59,7 @@ def create():
 			throw("company_id_missing")
 
 		data.update({
-			"doctype": "Cloud Company Group",
+			"doctype": "IOT Share Group",
 		})
 		doc = frappe.get_doc(data).insert()
 
@@ -81,7 +81,7 @@ def read(name):
 
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("Cloud Company Group", name)
+			"data": get_doc_as_dict("IOT Share Group", name)
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -91,24 +91,27 @@ def read(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def update(name, group_name, description, enabled=1, user_list=None):
+def update(name, group_name, description, role, users=None, devices=None):
 	try:
 		valid_auth_code()
 		if 'Company Admin' in frappe.get_roles(frappe.session.user):
 			throw("only_admin_can_update_group")
-
 		data = {
 			"name": name,
 			"group_name": group_name,
 			"description": description,
-			"enabled": enabled
+			"role": role
 		}
-		if user_list is not None:
+		if users is not None:
 			data.update({
-				"user_list": user_list
+				"users": users
+			})
+		if devices is not None:
+			data.update({
+				"devices": devices
 			})
 
-		update_doc("Cloud Company Group", data)
+		update_doc("IOT Share Group", data)
 		frappe.response.update({
 			"ok": True,
 			"message": "company_group_updated"
@@ -127,9 +130,7 @@ def remove(name):
 		if 'Company Admin' in frappe.get_roles(frappe.session.user):
 			throw("only_admin_can_remove_group")
 
-		update_doc("Cloud Company Group", {
-			"enabled": 0
-		})
+		frappe.delete_doc("IOT Share Group", name)
 		frappe.response.update({
 			"ok": True,
 			"message": "company_group_updated"
