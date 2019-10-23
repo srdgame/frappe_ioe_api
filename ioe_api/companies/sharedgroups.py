@@ -19,7 +19,6 @@ def test():
 	})
 
 
-
 def list_company_shared_groups(company):
 	if 'Company Admin' in frappe.get_roles(frappe.session.user):
 		return []
