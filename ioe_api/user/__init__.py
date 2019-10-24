@@ -124,7 +124,7 @@ def login(username, password):
 		doc = frappe.get_doc("User", frappe.session.user)
 
 		is_admin = 0
-		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+		if 'Company Admin' in frappe.get_roles():
 			is_admin = 1
 
 		frappe.response.update({
@@ -237,7 +237,7 @@ def read():
 		groups = list_user_groups(frappe.session.user)
 
 		is_admin = 0
-		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+		if 'Company Admin' in frappe.get_roles():
 			is_admin = 1
 
 		frappe.response.update({

@@ -20,7 +20,7 @@ def test():
 
 
 def list_company_groups(company):
-	if 'Company Admin' in frappe.get_roles(frappe.session.user):
+	if 'Company Admin' not in frappe.get_roles():
 		return []
 
 	return [d[0] for d in frappe.db.get_values("Cloud Company Group", {"company": company, "enabled": 1}, "name")]
@@ -49,13 +49,16 @@ def create():
 		valid_auth_code()
 		data = get_post_json_data()
 
-		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+		if 'Company Admin' not in frappe.get_roles():
 			throw("only_admin_can_create_group")
 
 		if not data.get("group_name"):
 			throw("group_name_missing")
 		if not data.get("company"):
 			throw("company_id_missing")
+
+		if frappe.get_value("Cloud Company", data.get('company'), "admin") != frappe.session.user:
+			throw("you_are_not_admin_of_this_company")
 
 		data.update({
 			"doctype": "Cloud Company Group",
@@ -93,7 +96,7 @@ def read(name):
 def update(name, group_name, description, enabled=1, user_list=None):
 	try:
 		valid_auth_code()
-		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+		if 'Company Admin' not in frappe.get_roles():
 			throw("only_admin_can_update_group")
 
 		data = {
@@ -123,7 +126,7 @@ def update(name, group_name, description, enabled=1, user_list=None):
 def remove(name):
 	try:
 		valid_auth_code()
-		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+		if 'Company Admin' not in frappe.get_roles():
 			throw("only_admin_can_remove_group")
 
 		update_doc("Cloud Company Group", {

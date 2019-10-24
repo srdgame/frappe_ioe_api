@@ -36,7 +36,7 @@ def validate_owner(name):
 @frappe.whitelist()
 def list():
 	try:
-		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+		if 'Company Admin' not in frappe.get_roles():
 			throw("not_company_admin")
 
 		companies = list_admin_companies(frappe.session.user)
@@ -68,7 +68,7 @@ def create():
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
 
-		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+		if 'Company Admin' not in frappe.get_roles():
 			throw("not_company_admin")
 
 		data = get_post_json_data()
@@ -94,7 +94,7 @@ def create():
 @frappe.whitelist()
 def read(name):
 	try:
-		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+		if 'Company Admin' not in frappe.get_roles():
 			throw("not_company_admin")
 
 		validate_owner(name)
@@ -116,7 +116,7 @@ def update():
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
 
-		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+		if 'Company Admin' not in frappe.get_roles():
 			throw("not_company_admin")
 
 		data = get_post_json_data()
@@ -140,7 +140,7 @@ def remove(name):
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
 
-		if 'Company Admin' in frappe.get_roles(frappe.session.user):
+		if 'Company Admin' not in frappe.get_roles():
 			throw("not_company_admin")
 
 		validate_owner(name)
