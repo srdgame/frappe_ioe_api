@@ -15,22 +15,15 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "companies.sharedgroups.test"
+		"source": "companies.employees.test"
 	})
-
-
-def list_company_shared_groups(company):
-	if 'Company Admin' not in frappe.get_roles():
-		return []
-
-	return [d[0] for d in frappe.db.get_values("IOT Share Group", {"company": company}, "name")]
 
 
 @frappe.whitelist(allow_guest=True)
 def list(company):
 	try:
 		valid_auth_code()
-		data = list_company_shared_groups(company)
+		data = [d.name for d in frappe.get_all("Cloud Employee", filters={"company": company})]
 
 		frappe.response.update({
 			"ok": True,
@@ -50,10 +43,10 @@ def create():
 		data = get_post_json_data()
 
 		if 'Company Admin' not in frappe.get_roles():
-			throw("only_admin_can_create_shared_group")
+			throw("only_admin_can_create_employee")
 
-		if not data.get("group_name"):
-			throw("group_name_missing")
+		if not data.get("user"):
+			throw("user_id_missing")
 		if not data.get("company"):
 			throw("company_id_missing")
 
@@ -61,7 +54,7 @@ def create():
 			throw("you_are_not_admin_of_this_company")
 
 		data.update({
-			"doctype": "IOT Share Group",
+			"doctype": "Cloud Employee",
 		})
 		doc = frappe.get_doc(data).insert()
 
@@ -83,40 +76,7 @@ def read(name):
 
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("IOT Share Group", name)
-		})
-	except Exception as ex:
-		frappe.response.update({
-			"ok": False,
-			"error": str(ex)
-		})
-
-
-@frappe.whitelist(allow_guest=True)
-def update(name, group_name, description, role, users=None, devices=None):
-	try:
-		valid_auth_code()
-		if 'Company Admin' not in frappe.get_roles():
-			throw("only_admin_can_update_shared_group")
-		data = {
-			"name": name,
-			"group_name": group_name,
-			"description": description,
-			"role": role
-		}
-		if users is not None:
-			data.update({
-				"users": users
-			})
-		if devices is not None:
-			data.update({
-				"devices": devices
-			})
-
-		update_doc("IOT Share Group", data)
-		frappe.response.update({
-			"ok": True,
-			"message": "company_shared_group_updated"
+			"data": get_doc_as_dict("Cloud Employee", name)
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -130,12 +90,12 @@ def remove(name):
 	try:
 		valid_auth_code()
 		if 'Company Admin' not in frappe.get_roles():
-			throw("only_admin_can_remove_shared_group")
+			throw("only_admin_can_remove_employee")
 
-		frappe.delete_doc("IOT Share Group", name)
+		frappe.delete_doc("Cloud Employee", name)
 		frappe.response.update({
 			"ok": True,
-			"message": "company_shared_group_updated"
+			"message": "company_employee_updated"
 		})
 	except Exception as ex:
 		frappe.response.update({
