@@ -110,6 +110,19 @@ def update(name, group_name, description, enabled=1, user_list=None):
 				"user_list": user_list
 			})
 
+		if user_list is not None and group_name == "root":
+			company = frappe.get_value("Cloud Company Group", name, "company")
+			users = [d.user for d in user_list]
+			org_users = [d.name for d in frappe.get_all("Cloud Employee", filters={"company": company})]
+
+			for user in org_users:
+				if user not in users:
+					frappe.delete_doc("Cloud Employee", user)
+			for user in users:
+				if user not in org_users:
+					doc = frappe.get_doc({"doctype": "Cloud Employee", "user": user, "company": company})
+					doc.insert(ignore_permissions=True)
+
 		update_doc("Cloud Company Group", data)
 		frappe.response.update({
 			"ok": True,

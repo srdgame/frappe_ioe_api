@@ -7,6 +7,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe.utils import cint
 from frappe.handler import logout as frappe_logout
 from frappe.core.doctype.user.user import sign_up, reset_password as _reset_password, update_password as _update_password
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
@@ -255,6 +256,34 @@ def read():
 				"is_admin": is_admin,
 				"is_developer": frappe.get_value("App Developer", frappe.session.user, "enabled")
 			}
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def exists(user):
+	try:
+		valid_auth_code()
+
+		if 'Company Admin' in frappe.get_roles():
+			throw("has_no_permission")
+
+		if cint(frappe.db.get_value("System Settings", "System Settings", "allow_login_using_mobile_number")):
+			user = frappe.db.get_value("User", filters={"mobile_no": user}, fieldname="name") or user
+
+		if cint(frappe.db.get_value("System Settings", "System Settings", "allow_login_using_user_name")):
+			user = frappe.db.get_value("User", filters={"username": user}, fieldname="name") or user
+
+		data = 1
+		if not cint(frappe.db.get_value('User', user, 'enabled')):
+			data = 0
+		frappe.response.update({
+			"ok": True,
+			"data": data
 		})
 	except Exception as ex:
 		frappe.response.update({
