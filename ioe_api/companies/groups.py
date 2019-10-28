@@ -155,3 +155,53 @@ def remove(name):
 			"error": str(ex)
 		})
 
+
+@frappe.whitelist(allow_guest=True)
+def add_user(name, user, role='Admin'):
+	try:
+		valid_auth_code()
+		if 'Company Admin' not in frappe.get_roles():
+			throw("not_permitted")
+
+		group = frappe.get_doc("Cloud Company Group", name)
+
+		if group.group_name == "root":
+			company = frappe.get_value("Cloud Company Group", group.name, "company")
+			doc = frappe.get_doc({"doctype": "Cloud Employee", "user": user, "company": company})
+			doc.insert(ignore_permissions=True)
+		group.add_users(role, [user])
+
+		frappe.response.update({
+			"ok": True,
+			"message": "user_added"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def remove_user(name, user):
+	try:
+		valid_auth_code()
+		if 'Company Admin' not in frappe.get_roles():
+			throw("not_permitted")
+
+		group = frappe.get_doc("Cloud Company Group", name)
+
+		if group.group_name == "root":
+			frappe.delete_doc("Cloud Employee", user)
+		group.remove_users([user])
+
+		frappe.response.update({
+			"ok": True,
+			"message": "user_removed"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+

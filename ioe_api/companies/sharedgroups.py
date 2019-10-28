@@ -8,7 +8,10 @@
 from __future__ import unicode_literals
 import frappe
 from ioe_api.helper import valid_auth_code, get_post_json_data, throw, get_doc_as_dict, update_doc
-
+from iot.iot.doctype.iot_share_group.iot_share_group import add_user as _add_user
+from iot.iot.doctype.iot_share_group.iot_share_group import remove_user as _remove_user
+from iot.iot.doctype.iot_share_group.iot_share_group import add_device as _add_device
+from iot.iot.doctype.iot_share_group.iot_share_group import remove_device as _remove_device
 
 @frappe.whitelist(allow_guest=True)
 def test():
@@ -142,4 +145,81 @@ def remove(name):
 			"ok": False,
 			"error": str(ex)
 		})
+
+
+@frappe.whitelist(allow_guest=True)
+def add_user(name, user, comment):
+	try:
+		valid_auth_code()
+		if 'Company Admin' not in frappe.get_roles():
+			throw("not_permitted")
+
+		_add_user(name, user, comment)
+		frappe.response.update({
+			"ok": True,
+			"message": "user_added"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def remove_user(name, user):
+	try:
+		valid_auth_code()
+		if 'Company Admin' not in frappe.get_roles():
+			throw("not_permitted")
+
+		_remove_user(name, user)
+		frappe.response.update({
+			"ok": True,
+			"message": "user_removed"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def add_device(name, device):
+	try:
+		valid_auth_code()
+		if 'Company Admin' not in frappe.get_roles():
+			throw("not_permitted")
+
+		_add_device(name, device)
+		frappe.response.update({
+			"ok": True,
+			"message": "device_added"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def remove_device(name, device):
+	try:
+		valid_auth_code()
+		if 'Company Admin' not in frappe.get_roles():
+			throw("not_permitted")
+
+		_remove_device(name, device)
+		frappe.response.update({
+			"ok": True,
+			"message": "device_removed"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
 
