@@ -110,6 +110,7 @@ def remove(name):
 		valid_auth_code()
 
 		update_doc("Cloud Company", {
+			"name": name,
 			"enabled": 0
 		})
 		frappe.response.update({

@@ -143,6 +143,7 @@ def remove(name):
 			throw("only_admin_can_remove_group")
 
 		update_doc("Cloud Company Group", {
+			"name": name,
 			"enabled": 0
 		})
 		frappe.response.update({
