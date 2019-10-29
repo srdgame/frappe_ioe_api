@@ -166,9 +166,12 @@ def add_user(name, user, role='Admin'):
 
 		group = frappe.get_doc("Cloud Company Group", name)
 
-		if group.group_name == "root":
-			company = frappe.get_value("Cloud Company Group", group.name, "company")
-			doc = frappe.get_doc({"doctype": "Cloud Employee", "user": user, "company": company})
+		user_comp = frappe.get_value("Cloud Employee", user, "company")
+		if user_comp and user_comp != group.company:
+			throw("user_in_another_company")
+
+		if group.group_name == "root" and user_comp is None:
+			doc = frappe.get_doc({"doctype": "Cloud Employee", "user": user, "company": group.company})
 			doc.insert(ignore_permissions=True)
 		group.add_users(role, [user])
 
