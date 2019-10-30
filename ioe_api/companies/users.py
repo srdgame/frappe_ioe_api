@@ -42,7 +42,7 @@ def create():
 			throw("new_password_missing")
 
 		data.update({
-			"doctype": "Cloud Employee",
+			"doctype": "User",
 			"language": "zh",
 			"enabled": 1,
 			"send_welcome_email": 0
