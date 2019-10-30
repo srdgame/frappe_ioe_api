@@ -195,9 +195,9 @@ def remove_user(name, user):
 
 		group = frappe.get_doc("Cloud Company Group", name)
 
+		group.remove_users(user)
 		if group.group_name == "root":
 			frappe.delete_doc("Cloud Employee", user)
-		group.remove_users(user)
 
 		frappe.response.update({
 			"ok": True,
