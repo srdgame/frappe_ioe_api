@@ -173,7 +173,7 @@ def add_user(name, user, role='Admin'):
 		if group.group_name == "root" and user_comp is None:
 			doc = frappe.get_doc({"doctype": "Cloud Employee", "user": user, "company": group.company})
 			doc.insert(ignore_permissions=True)
-		group.add_users(role, [user])
+		group.add_users(role, user)
 
 		frappe.response.update({
 			"ok": True,
@@ -197,7 +197,7 @@ def remove_user(name, user):
 
 		if group.group_name == "root":
 			frappe.delete_doc("Cloud Employee", user)
-		group.remove_users([user])
+		group.remove_users(user)
 
 		frappe.response.update({
 			"ok": True,
