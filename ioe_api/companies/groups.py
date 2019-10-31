@@ -7,7 +7,6 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe import _dict
 from ioe_api.helper import valid_auth_code, get_post_json_data, throw, get_doc_as_dict, update_doc
 
 
@@ -108,7 +107,7 @@ def update(name, group_name, description, enabled=1, user_list=None):
 		}
 		if user_list is not None:
 			data.update({
-				"user_list": [_dict(d) for d in user_list]
+				"user_list": user_list
 			})
 
 		if user_list is not None and group_name == "root":

@@ -7,7 +7,6 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe import _dict
 from ioe_api.helper import valid_auth_code, get_post_json_data, throw, get_doc_as_dict, update_doc
 from iot.iot.doctype.iot_share_group.iot_share_group import add_user as _add_user
 from iot.iot.doctype.iot_share_group.iot_share_group import remove_user as _remove_user
@@ -110,11 +109,11 @@ def update(name, group_name, description, role, users=None, devices=None):
 		}
 		if users is not None:
 			data.update({
-				"users": [_dict(d) for d in users]
+				"users": users
 			})
 		if devices is not None:
 			data.update({
-				"devices": [_dict(d) for d in devices]
+				"devices": devices
 			})
 
 		update_doc("IOT Share Group", data)
