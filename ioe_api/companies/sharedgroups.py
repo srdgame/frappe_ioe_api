@@ -96,7 +96,7 @@ def read(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def update(name, group_name, description, role, users=None, devices=None):
+def update(name, group_name, description, role): #, users=None, devices=None):
 	try:
 		valid_auth_code()
 		if 'Company Admin' not in frappe.get_roles():
@@ -107,10 +107,13 @@ def update(name, group_name, description, role, users=None, devices=None):
 			"description": description,
 			"role": role
 		}
+		post_data = get_post_json_data()
+		users = post_data.get('users')
 		if users is not None:
 			data.update({
 				"users": users
 			})
+		devices = post_data.get('devices')
 		if devices is not None:
 			data.update({
 				"devices": devices
