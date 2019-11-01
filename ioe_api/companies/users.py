@@ -74,3 +74,39 @@ def read(name):
 			"ok": False,
 			"error": str(ex)
 		})
+
+
+@frappe.whitelist(allow_guest=True)
+def update(name, first_name, last_name, mobile_no, new_password=None, enabled=1):
+	try:
+		valid_auth_code()
+		if 'Company Admin' not in frappe.get_roles():
+			throw("only_admin_can_update_group")
+		company = frappe.get_value("Cloud Employee", name, "company")
+		if not company:
+			throw("user_is_not_an_employee")
+		if frappe.get_value("Cloud Company", company, "admin") != frappe.session.user:
+			throw("user_is_not_in_your_company")
+
+		user = frappe.get_doc("User", name)
+		user.update({
+			"send_welcome_email": 0,
+			"first_name": first_name,
+			"last_name": last_name,
+			"mobile_no": mobile_no,
+			"enabled": enabled
+		})
+		if new_password is not None:
+			user.update({"new_password": "new_password"})
+
+		user.save(ignore_permissions=True)
+
+		frappe.response.update({
+			"ok": True,
+			"message": "company_group_updated"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
