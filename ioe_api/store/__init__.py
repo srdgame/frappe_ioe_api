@@ -32,7 +32,7 @@ def list(owner=None, tags=None):
 				if tag[0] in tags:
 					apps.append(as_dict(frappe.get_doc("IOT Application", d.name)))
 			'''
-			apps.append(get_doc_as_dict("IOT Application", d.name, keep_owner=True))
+			apps.append(get_doc_as_dict("IOT Application", d.name, keep_owner=True, include_tags=True))
 
 		frappe.response.update({
 			"ok": True,

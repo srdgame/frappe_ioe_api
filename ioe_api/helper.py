@@ -50,7 +50,7 @@ def throw(err):
 	raise ApiError(err)
 
 
-def as_dict(doc, keep_modified=True, keep_owner=False, keep_creation=True):
+def as_dict(doc, keep_modified=True, keep_owner=False, keep_creation=True, include_tags=False):
 	keep_data = _dict({
 		"name": doc.name
 	})
@@ -60,18 +60,20 @@ def as_dict(doc, keep_modified=True, keep_owner=False, keep_creation=True):
 		keep_data['owner'] = doc.owner
 	if keep_creation:
 		keep_data['creation'] = doc.creation
+	if include_tags:
+		keep_data['tags'] = get_tags(doc.doc_type, doc.name)
 
 	return doc.as_dict(no_default_fields=True).update(keep_data)
 
 
-def get_doc_as_dict(doc_type, name, keep_modified=True, keep_owner=False, keep_creation=True):
+def get_doc_as_dict(doc_type, name, keep_modified=True, keep_owner=False, keep_creation=True, include_tags=False):
 	doc = None
 	try:
 		doc = frappe.get_doc(doc_type, name)
 	except Exception as ex:
 		throw("object_not_found")
 
-	return as_dict(doc, keep_modified=keep_modified, keep_owner=keep_owner, keep_creation=keep_creation)
+	return as_dict(doc, keep_modified=keep_modified, keep_owner=keep_owner, keep_creation=keep_creation, include_tags=include_tags)
 
 
 def update_doc(doc_type, d):
@@ -92,6 +94,12 @@ def update_doc(doc_type, d):
 			del d[key]
 
 	return doc.update(d).save()
+
+
+def list_tags(doctype):
+	tags = [tag.tag for tag in frappe.get_all("Tag Link", filters={
+			"document_type": doctype
+		}, fields=["tag"])]
 
 
 def get_tags(doctype, name):
