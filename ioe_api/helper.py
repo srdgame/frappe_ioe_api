@@ -92,3 +92,22 @@ def update_doc(doc_type, d):
 			del d[key]
 
 	return doc.update(d).save()
+
+
+def get_tags(doctype, name):
+	tags = [tag.tag for tag in frappe.get_all("Tag Link", filters={
+			"document_type": doctype,
+			"document_name": name
+		}, fields=["tag"])]
+
+	return ",".join([tag for tag in tags])
+# def get_tags(doctype, name):
+# 	return [tag.tag for tag in frappe.get_all("Tag Link", filters={
+# 			"document_type": doctype,
+# 			"document_name": name
+# 		}, fields=["tag"])]
+
+
+def update_tags(doc, tags):
+	from frappe.desk.doctype.tag.tag import update_tags as _update_tags
+	return _update_tags(doc, tags)

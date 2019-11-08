@@ -7,8 +7,7 @@
 
 from __future__ import unicode_literals
 import frappe
-from app_center.app_center.doctype.iot_application.iot_application import list_tags, add_tags, remove_tags, clear_tags
-from ioe_api.helper import valid_auth_code, throw
+from ioe_api.helper import valid_auth_code, get_tags, update_tags
 
 
 @frappe.whitelist(allow_guest=True)
@@ -27,7 +26,7 @@ def list(name):
 
 		frappe.response.update({
 			"ok": True,
-			"data": list_tags(app=name)
+			"data": get_tags('IOT Application', name)
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -37,43 +36,15 @@ def list(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def create(name, *tags):
+def update(name, tags):
 	try:
 		valid_auth_code()
+		doc = frappe.get_doc('IOT Application', name)
+		update_tags(doc, tags)
 
 		frappe.response.update({
 			"ok": True,
-			"data": add_tags(app=name, tags=tags)
-		})
-	except Exception as ex:
-		frappe.response.update({
-			"ok": False,
-			"error": str(ex)
-		})
-
-
-@frappe.whitelist(allow_guest=True)
-def remove(name, *tags):
-	try:
-		valid_auth_code()
-		frappe.response.update({
-			"ok": True,
-			"data": remove_tags(app=name, tags=tags)
-		})
-	except Exception as ex:
-		frappe.response.update({
-			"ok": False,
-			"error": str(ex)
-		})
-
-
-@frappe.whitelist(allow_guest=True)
-def clear(name):
-	try:
-		valid_auth_code()
-		frappe.response.update({
-			"ok": True,
-			"data": clear_tags(app=name)
+			"data": 'done'
 		})
 	except Exception as ex:
 		frappe.response.update({
