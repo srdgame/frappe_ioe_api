@@ -101,6 +101,8 @@ def list_tags(doctype):
 			"document_type": doctype
 		}, fields=["tag"])]
 
+	return ",".join([tag for tag in tags])
+
 
 def get_tags(doctype, name):
 	tags = [tag.tag for tag in frappe.get_all("Tag Link", filters={
