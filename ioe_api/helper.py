@@ -61,7 +61,7 @@ def as_dict(doc, keep_modified=True, keep_owner=False, keep_creation=True, inclu
 	if keep_creation:
 		keep_data['creation'] = doc.creation
 	if include_tags:
-		keep_data['tags'] = get_tags(doc.doc_type, doc.name)
+		keep_data['tags'] = get_tags(doc.doctype, doc.name)
 
 	return doc.as_dict(no_default_fields=True).update(keep_data)
 
