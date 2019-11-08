@@ -50,7 +50,7 @@ def read(name):
 	try:
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("IOT Application", name, keep_owner=True)
+			"data": get_doc_as_dict("IOT Application", name, keep_owner=True, include_tags=True)
 		})
 	except Exception as ex:
 		frappe.response.update({
