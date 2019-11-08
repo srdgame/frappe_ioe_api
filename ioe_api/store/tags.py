@@ -8,6 +8,7 @@
 from __future__ import unicode_literals
 import frappe
 from ioe_api.helper import valid_auth_code, list_tags
+from frappe.desk.reportview import get_sidebar_stats
 
 
 @frappe.whitelist(allow_guest=True)
@@ -23,10 +24,11 @@ def test():
 def list():
 	try:
 		valid_auth_code()
+		data = get_sidebar_stats(stats="_user_tags", doctype='IOT Application')
 
 		frappe.response.update({
 			"ok": True,
-			"data": list_tags('IOT Application')
+			"data": data.get('stats').get('_user_tags')
 		})
 	except Exception as ex:
 		frappe.response.update({

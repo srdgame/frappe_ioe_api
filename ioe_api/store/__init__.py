@@ -26,13 +26,19 @@ def list(owner=None, tags=None):
 		if not owner:
 			owner = ["!=", "Administrator"]
 		filters = {"owner": owner, "published": 1}
-		for d in frappe.get_all("IOT Application", "name", filters=filters, order_by="modified desc"):
-			'''
-			for tag in frappe.get_value("IOT Application Tag", ["name", "tag"], {"parent": d[0]}):
-				if tag[0] in tags:
-					apps.append(as_dict(frappe.get_doc("IOT Application", d.name)))
-			'''
-			apps.append(get_doc_as_dict("IOT Application", d.name, keep_owner=True, include_tags=True))
+		if tags is None:
+			for d in frappe.get_all("IOT Application", "name", filters=filters, order_by="modified desc"):
+				'''
+				for tag in frappe.get_value("IOT Application Tag", ["name", "tag"], {"parent": d[0]}):
+					if tag[0] in tags:
+						apps.append(as_dict(frappe.get_doc("IOT Application", d.name)))
+				'''
+				apps.append(get_doc_as_dict("IOT Application", d.name, keep_owner=True, include_tags=True))
+		else:
+			tag_filters = {"tag", ["in", tags]}
+			for d in frappe.get_all("Tag Link", "document_name", filters=tag_filters):
+				if frappe.get_value("IOT Application", d.document_name, "published") == 1:
+					apps.append(get_doc_as_dict("IOT Application", d.name, keep_owner=True, include_tags=True))
 
 		frappe.response.update({
 			"ok": True,
