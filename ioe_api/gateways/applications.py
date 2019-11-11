@@ -101,7 +101,19 @@ def install(gateway, app, version, inst, conf, id=None, from_web=None):
 		}
 		if from_web is not None:
 			data.update({"from_web": 1})
+
 		ret = fire_action(id=id, action="install", gateway=gateway, data=data)
+
+		frappe.get_doc({
+			"doctype": "IOT Application Statistics",
+			"app": app,
+			"device": gateway,
+			"version": version,
+			"action": 'INSTALL',
+			"owner_company": doc.company,
+			"owner_type": doc.owner_type,
+			"owner_id": doc.owner_id,
+		}).insert()
 
 		frappe.response.update({
 			"ok": True,
@@ -123,6 +135,17 @@ def remove(gateway, inst, id=None):
 			throw("has_no_permission")
 
 		ret = fire_action(id=id, action="uninstall", gateway=gateway, data={"inst": inst})
+
+		# frappe.get_doc({
+		# 	"doctype": "IOT Application Statistics",
+		# 	"app": app,
+		# 	"device": gateway,
+		# 	"version": version,
+		# 	"action": 'UNINSTALL',
+		# 	"owner_company": doc.company,
+		# 	"owner_type": doc.owner_type,
+		# 	"owner_id": doc.owner_id,
+		# }).insert()
 
 		frappe.response.update({
 			"ok": True,
@@ -235,6 +258,17 @@ def upgrade(gateway, inst, app, version, conf=None, id=None):
 		if conf is not None:
 			data.update({"conf": conf})
 		ret = fire_action(id=id, action="upgrade", gateway=gateway, data=data)
+
+		frappe.get_doc({
+			"doctype": "IOT Application Statistics",
+			"app": app,
+			"device": gateway,
+			"version": version,
+			"action": 'UPGRADE',
+			"owner_company": doc.company,
+			"owner_type": doc.owner_type,
+			"owner_id": doc.owner_id,
+		}).insert()
 
 		frappe.response.update({
 			"ok": True,

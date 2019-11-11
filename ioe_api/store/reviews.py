@@ -22,14 +22,14 @@ def test():
 @frappe.whitelist(allow_guest=True)
 def list(app):
 	try:
-		apps = []
+		data = []
 		filters = {"app": app}
 		for d in frappe.get_all("IOT Application Review", "name", filters=filters, order_by="modified desc"):
-			apps.append(as_dict(frappe.get_doc("IOT Application Review", d.name)))
+			data.append(as_dict(frappe.get_doc("IOT Application Review", d.name)))
 
 		frappe.response.update({
 			"ok": True,
-			"data": apps
+			"data": data
 		})
 	except Exception as ex:
 		frappe.response.update({
