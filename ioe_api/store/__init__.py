@@ -15,7 +15,7 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "app.test"
+		"source": "store.test"
 	})
 
 
@@ -40,6 +40,9 @@ def list(owner=None, tags=None):
 				if frappe.get_value("IOT Application", d.document_name, "published") == 1:
 					apps.append(get_doc_as_dict("IOT Application", d.name, keep_owner=True, include_tags=True))
 
+		for app in apps:
+			app.installed = frappe.get_value("IOT Application Counter", app.name, "installed") or 0
+
 		frappe.response.update({
 			"ok": True,
 			"data": apps
@@ -54,9 +57,11 @@ def list(owner=None, tags=None):
 @frappe.whitelist(allow_guest=True)
 def read(name):
 	try:
+		data = get_doc_as_dict("IOT Application", name, keep_owner=True, include_tags=True)
+		data.installed = frappe.get_value("IOT Application Counter", name, "installed") or 0
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("IOT Application", name, keep_owner=True, include_tags=True)
+			"data": data
 		})
 	except Exception as ex:
 		frappe.response.update({

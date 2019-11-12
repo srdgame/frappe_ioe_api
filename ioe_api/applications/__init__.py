@@ -32,6 +32,9 @@ def list():
 		for d in frappe.get_all("IOT Application", "name", filters=filters, order_by="modified desc"):
 			apps.append(as_dict(frappe.get_doc("IOT Application", d.name), keep_owner=True, include_tags=True))
 
+		for app in apps:
+			app.installed = frappe.get_value("IOT Application Counter", app.name, "installed") or 0
+
 		frappe.response.update({
 			"ok": True,
 			"data": apps
@@ -112,9 +115,11 @@ def icon():
 def read(name):
 	try:
 		valid_auth_code()
+		data = get_doc_as_dict("IOT Application", name, keep_owner=True, include_tags=True)
+		data.installed = frappe.get_value("IOT Application Counter", name, "installed") or 0
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("IOT Application", name, keep_owner=True, include_tags=True)
+			"data": data
 		})
 	except Exception as ex:
 		frappe.response.update({
