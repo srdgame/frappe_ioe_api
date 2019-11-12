@@ -40,7 +40,7 @@ def list():
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def add(app, comment=None, priority=0):
 	try:
 		valid_auth_code()
@@ -58,6 +58,25 @@ def add(app, comment=None, priority=0):
 			doc = frappe.get_doc("IOT Application Favorites", frappe.session.user)
 			doc.append_favorites([{"app": app, "comment": comment, "priority": priority}])
 			doc.save()
+
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def remove(app):
+	try:
+		valid_auth_code()
+
+		if frappe.request.method != "POST":
+			throw("method_must_be_post")
+
+		doc = frappe.get_doc("IOT Application Favorites", frappe.session.user)
+		doc.remove_favorites([app])
+		doc.save()
 
 	except Exception as ex:
 		frappe.response.update({
