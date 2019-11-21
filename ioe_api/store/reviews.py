@@ -25,7 +25,7 @@ def list(app):
 		data = []
 		filters = {"app": app}
 		for d in frappe.get_all("IOT Application Review", "name", filters=filters, order_by="modified desc"):
-			data.append(as_dict(frappe.get_doc("IOT Application Review", d.name)))
+			data.append(as_dict(frappe.get_doc("IOT Application Review", d.name), keep_owner=True))
 
 		frappe.response.update({
 			"ok": True,
@@ -70,7 +70,7 @@ def read(name):
 
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("IOT Application Review", name)
+			"data": get_doc_as_dict("IOT Application Review", name, keep_owner=True)
 		})
 	except Exception as ex:
 		frappe.response.update({

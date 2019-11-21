@@ -25,7 +25,7 @@ def list(app):
 		apps = []
 		filters = {"app": app}
 		for d in frappe.get_all("IOT Application Comment", "name", filters=filters, order_by="modified desc"):
-			apps.append(as_dict(frappe.get_doc("IOT Application Comment", d.name)))
+			apps.append(as_dict(frappe.get_doc("IOT Application Comment", d.name), keep_owner=True))
 
 		frappe.response.update({
 			"ok": True,
@@ -39,18 +39,18 @@ def list(app):
 
 
 @frappe.whitelist()
-def create(app, title, content, reply_to):
+def create(app, title, comment, reply_to):
 	try:
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
-		content = str(content).replace('\n', '<br>')
+		comment = str(comment).replace('\n', '<br>')
 
 		doc = frappe.get_doc({
 			"doctype": "IOT Application Comment",
 			"app": app,
 			"reply_to": reply_to,
 			"title": title,
-			"content": content,
+			"comment": comment,
 		}).insert()
 
 		frappe.response.update({
@@ -70,7 +70,7 @@ def read(name):
 
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("IOT Application Comment", name)
+			"data": get_doc_as_dict("IOT Application Comment", name, keep_owner=True)
 		})
 	except Exception as ex:
 		frappe.response.update({
@@ -80,16 +80,16 @@ def read(name):
 
 
 @frappe.whitelist()
-def update(name, title, content):
+def update(name, title, comment):
 	try:
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
-		content = str(content).replace('\n', '<br>')
+		comment = str(comment).replace('\n', '<br>')
 
 		doc = update_doc("IOT Application Comment", {
 			"name": name,
 			"title": title,
-			"content": content
+			"comment": comment
 		})
 
 		frappe.response.update({
