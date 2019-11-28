@@ -56,8 +56,7 @@ def add(app, comment=None, priority=0):
 			}).insert()
 		else:
 			doc = frappe.get_doc("IOT Application Favorites", frappe.session.user)
-			doc.append_favorites([{"app": app, "comment": comment, "priority": priority}])
-			doc.save()
+			doc.add_favorites({"app": app, "comment": comment, "priority": priority})
 
 	except Exception as ex:
 		frappe.response.update({
@@ -75,7 +74,7 @@ def remove(app):
 			throw("method_must_be_post")
 
 		doc = frappe.get_doc("IOT Application Favorites", frappe.session.user)
-		doc.remove_favorites([app])
+		doc.remove_favorites(app)
 		doc.save()
 
 	except Exception as ex:
