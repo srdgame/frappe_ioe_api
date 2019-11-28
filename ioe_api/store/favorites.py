@@ -58,6 +58,10 @@ def add(app, comment=None, priority=0):
 			doc = frappe.get_doc("IOT Application Favorites", frappe.session.user)
 			doc.add_favorites({"app": app, "comment": comment, "priority": priority})
 
+		frappe.response.update({
+			"ok": True,
+			"data": "favorites_added"
+		})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
@@ -75,8 +79,11 @@ def remove(app):
 
 		doc = frappe.get_doc("IOT Application Favorites", frappe.session.user)
 		doc.remove_favorites(app)
-		doc.save()
 
+		frappe.response.update({
+			"ok": True,
+			"data": "favorites_added"
+		})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
