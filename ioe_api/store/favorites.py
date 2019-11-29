@@ -82,7 +82,7 @@ def remove(app):
 
 		frappe.response.update({
 			"ok": True,
-			"data": "favorites_added"
+			"data": "favorites_removed"
 		})
 	except Exception as ex:
 		frappe.response.update({
