@@ -26,7 +26,7 @@ def list():
 
 		data = []
 		doc = frappe.get_doc("IOT Application Favorites", frappe.session.user)
-		for d in doc.apps.favorites:
+		for d in doc.favorites:
 			data.append(as_dict(frappe.get_doc("IOT Application", d.app)))
 
 		frappe.response.update({
