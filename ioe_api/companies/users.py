@@ -97,7 +97,7 @@ def update(name, first_name, last_name, mobile_no, new_password=None, enabled=1)
 			"enabled": enabled
 		})
 		if new_password is not None:
-			user.update({"new_password": "new_password"})
+			user.update({"new_password": new_password})
 
 		user.save(ignore_permissions=True)
 
