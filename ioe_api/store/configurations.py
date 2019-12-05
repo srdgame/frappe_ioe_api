@@ -20,13 +20,13 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def list(app, conf_type='Template', owner=None, tags=None):
+def list(app, conf_type='Template', developer=None, tags=None):
 
 	try:
 		apps = []
 		filters = {"app": app, "type": conf_type, "public": 1}
-		if owner:
-			filters.update({"owner": owner})
+		if developer:
+			filters.update({"developer": developer})
 		for d in frappe.get_all("IOT Application Conf", "name", filters=filters, order_by="modified desc"):
 			'''
 			for tag in frappe.get_value("IOT Application Conf Tag", ["name", "tag"], {"parent": d[0]}):

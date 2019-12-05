@@ -28,9 +28,9 @@ def list():
 	try:
 		valid_auth_code()
 		apps = []
-		filters = {"owner": frappe.session.user}
+		filters = {"developer": frappe.session.user}
 		for d in frappe.get_all("IOT Application", "name", filters=filters, order_by="modified desc"):
-			apps.append(as_dict(frappe.get_doc("IOT Application", d.name), keep_owner=True, include_tags=True))
+			apps.append(as_dict(frappe.get_doc("IOT Application", d.name),  include_tags=True))
 
 		for app in apps:
 			app.installed = frappe.get_value("IOT Application Counter", app.name, "installed") or 0
@@ -53,7 +53,7 @@ def create():
 		data = get_post_json_data()
 		data.update({
 			"doctype": "IOT Application",
-			"owner": frappe.session.user,
+			"developer": frappe.session.user,
 			# "published": 0
 		})
 
@@ -115,7 +115,7 @@ def icon():
 def read(name):
 	try:
 		valid_auth_code()
-		data = get_doc_as_dict("IOT Application", name, keep_owner=True, include_tags=True)
+		data = get_doc_as_dict("IOT Application", name, include_tags=True)
 		data.installed = frappe.get_value("IOT Application Counter", name, "installed") or 0
 		frappe.response.update({
 			"ok": True,
@@ -149,12 +149,12 @@ def update():
 def remove(name):
 	try:
 		valid_auth_code()
-		owner = frappe.get_value("IOT Application", name, "owner")
-		if not owner:
+		developer = frappe.get_value("IOT Application", name, "developer")
+		if not developer:
 			throw("application_not_found")
 
-		if owner != frappe.session.user:
-			throw("not_application_owner")
+		if developer != frappe.session.user:
+			throw("not_application_developer")
 
 		if frappe.get_value("IOT Application", name, "published") == 1:
 			throw("published_iot_application_cannot_be_deleted!")

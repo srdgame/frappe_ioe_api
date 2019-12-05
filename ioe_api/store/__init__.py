@@ -20,12 +20,12 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def list(owner=None, tags=None):
+def list(developer=None, tags=None):
 	try:
 		apps = []
-		if not owner:
-			owner = ["!=", "Administrator"]
-		filters = {"owner": owner, "published": 1}
+		if not developer:
+			developer = ["!=", "Administrator"]
+		filters = {"developer": developer, "published": 1}
 		if tags is None:
 			for d in frappe.get_all("IOT Application", "name", filters=filters, order_by="modified desc"):
 				'''
@@ -33,12 +33,12 @@ def list(owner=None, tags=None):
 					if tag[0] in tags:
 						apps.append(as_dict(frappe.get_doc("IOT Application", d.name)))
 				'''
-				apps.append(get_doc_as_dict("IOT Application", d.name, keep_owner=True, include_tags=True))
+				apps.append(get_doc_as_dict("IOT Application", d.name, include_tags=True))
 		else:
 			tag_filters = {"tag", ["in", tags]}
 			for d in frappe.get_all("Tag Link", "document_name", filters=tag_filters):
 				if frappe.get_value("IOT Application", d.document_name, "published") == 1:
-					apps.append(get_doc_as_dict("IOT Application", d.name, keep_owner=True, include_tags=True))
+					apps.append(get_doc_as_dict("IOT Application", d.name, include_tags=True))
 
 		for app in apps:
 			app.installed = frappe.get_value("IOT Application Counter", app.name, "installed") or 0
@@ -57,7 +57,7 @@ def list(owner=None, tags=None):
 @frappe.whitelist(allow_guest=True)
 def read(name):
 	try:
-		data = get_doc_as_dict("IOT Application", name, keep_owner=True, include_tags=True)
+		data = get_doc_as_dict("IOT Application", name, include_tags=True)
 		data.installed = frappe.get_value("IOT Application Counter", name, "installed") or 0
 		frappe.response.update({
 			"ok": True,

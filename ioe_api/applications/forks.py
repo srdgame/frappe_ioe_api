@@ -42,13 +42,13 @@ def create(name, version=0, pre_conf=None):
 
 
 @frappe.whitelist()
-def list(name, version=None, owner=None):
+def list(name, version=None, developer=None):
 	try:
 		filters = {"fork_from": name}
 		if version:
 			filters.update({"fork_version": version})
-		if owner:
-			filters.update({"owner": owner})
+		if developer:
+			filters.update({"developer": developer})
 
 		apps = []
 		for d in frappe.get_all("IOT Application", "name", filters=filters, order_by="modified desc"):
