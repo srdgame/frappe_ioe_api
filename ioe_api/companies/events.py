@@ -33,6 +33,8 @@ filters = {"creation": [">", "2014-01-01"], "operation": "Owner"}
 def list(name, start=0, limit=40, filters=None):
 	try:
 		valid_auth_code()
+		if isinstance(filters, string_types):
+			filters = json.loads(filters) or {}
 
 		frappe.response.update({
 			"ok": True,
@@ -49,6 +51,8 @@ def list(name, start=0, limit=40, filters=None):
 def count(name, filters=None):
 	try:
 		valid_auth_code()
+		if isinstance(filters, string_types):
+			filters = json.loads(filters) or {}
 
 		frappe.response.update({
 			"ok": True,

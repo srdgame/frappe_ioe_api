@@ -37,6 +37,9 @@ def list(name, start=0, limit=40, filters=None):
 		if name != frappe.session.user:
 			throw("has_no_permission")
 
+		if isinstance(filters, string_types):
+			filters = json.loads(filters) or {}
+
 		frappe.response.update({
 			"ok": True,
 			"data": query_logs_by_user(user=name, start=start, limit=limit, filters=filters)
@@ -54,6 +57,9 @@ def count(name, filters=None):
 		valid_auth_code()
 		if name != frappe.session.user:
 			throw("has_no_permission")
+
+		if isinstance(filters, string_types):
+			filters = json.loads(filters) or {}
 
 		frappe.response.update({
 			"ok": True,
