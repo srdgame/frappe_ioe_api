@@ -50,7 +50,7 @@ def throw(err):
 	raise ApiError(err)
 
 
-def as_dict(doc, keep_modified=True, keep_owner=False, keep_creation=True, include_tags=False):
+def as_dict(doc, keep_modified=True, keep_owner=False, keep_creation=True, keep_docstatus=False, include_tags=False):
 	keep_data = _dict({
 		"name": doc.name
 	})
@@ -62,11 +62,13 @@ def as_dict(doc, keep_modified=True, keep_owner=False, keep_creation=True, inclu
 		keep_data['creation'] = doc.creation
 	if include_tags:
 		keep_data['tags'] = get_tags(doc.doctype, doc.name)
+	if keep_docstatus:
+		keep_data['docstatus'] = doc.docstatus
 
 	return doc.as_dict(no_default_fields=True).update(keep_data)
 
 
-def get_doc_as_dict(doc_type, name, keep_modified=True, keep_owner=False, keep_creation=True, include_tags=False):
+def get_doc_as_dict(doc_type, name, keep_modified=True, keep_owner=False, keep_creation=True, keep_docstatus=False, include_tags=False):
 	doc = None
 	try:
 		doc = frappe.get_doc(doc_type, name)
