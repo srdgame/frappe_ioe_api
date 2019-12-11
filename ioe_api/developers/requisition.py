@@ -97,13 +97,15 @@ def create():
 			'pay_account': frappe.form_dict.pay_account
 		}
 
-		id_card_image_file = frappe.request.files['id_card_image_file']  # 从表单的file字段获取文件，app_file为该表单的name值
-		if not id_card_image_file:
-			throw("business_licence_image_file_not_attached")
-		id_card_image_file_path = save_image_file(frappe.session.user, id_card_image_file, 'id_card_image')
-		data.update({
-			'id_card_image': id_card_image_file_path
-		})
+		id_card_image_file = frappe.request.files.get('id_card_image_file')  # 从表单的file字段获取文件，app_file为该表单的name值
+		if id_card_image_file:
+			id_card_image_file_path = save_image_file(frappe.session.user, id_card_image_file, 'id_card_image')
+			data.update({
+				'id_card_image': id_card_image_file_path
+			})
+		else:
+			#throw("business_licence_image_file_not_attached")
+			pass
 
 		doc = frappe.get_doc(data).insert()
 
