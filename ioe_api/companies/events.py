@@ -18,7 +18,7 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "gateway.event.test"
+		"source": "companies.events.test"
 	})
 
 

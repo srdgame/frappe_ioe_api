@@ -2,7 +2,7 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for gateway.xxx
+# Api for store.issues
 #
 
 from __future__ import unicode_literals
@@ -15,7 +15,7 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "gateway.xxxx.test"
+		"source": "store.issues.test"
 	})
 
 

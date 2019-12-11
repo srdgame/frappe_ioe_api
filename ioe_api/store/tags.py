@@ -2,7 +2,7 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for applications.tags
+# Api for store.tags
 #
 
 from __future__ import unicode_literals
@@ -16,7 +16,7 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "app.tags.test"
+		"source": "store.tags.test"
 	})
 
 

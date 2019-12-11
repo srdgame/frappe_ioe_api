@@ -78,7 +78,7 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "app.tags.test"
+		"source": "applications.tags.test"
 	})
 
 

@@ -2,7 +2,7 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for companies.requisition
+# Api for developers.requisition
 #
 
 from __future__ import unicode_literals
@@ -96,10 +96,6 @@ def create():
 			'pay_bank': frappe.form_dict.pay_bank,
 			'pay_account': frappe.form_dict.pay_account
 		}
-
-		comp_name = data.get("comp_name")
-		if not comp_name:
-			throw("company_name_missing")
 
 		id_card_image_file = frappe.request.files['id_card_image_file']  # 从表单的file字段获取文件，app_file为该表单的name值
 		if not id_card_image_file:

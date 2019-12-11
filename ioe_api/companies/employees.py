@@ -53,10 +53,19 @@ def create():
 		if frappe.get_value("Cloud Company", data.get('company'), "admin") != frappe.session.user:
 			throw("you_are_not_admin_of_this_company")
 
-		data.update({
-			"doctype": "Cloud Employee",
-		})
-		doc = frappe.get_doc(data).insert()
+		domain = frappe.get_value("Cloud Company", data.get('company'), "domain")
+		user = data.get("user")
+
+		if user == user[0 - len(domain):]:
+			data.update({
+				"doctype": "Cloud Employee",
+			})
+			doc = frappe.get_doc(data).insert()
+		else:
+			data.update({
+				"doctype": "Cloud Employee Invitation",
+			})
+			doc = frappe.get_doc(data).insert()
 
 		frappe.response.update({
 			"ok": True,

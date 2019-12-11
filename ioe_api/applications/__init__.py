@@ -19,7 +19,7 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "app.test"
+		"source": "applications.test"
 	})
 
 
@@ -158,6 +158,8 @@ def remove(name):
 
 		if frappe.get_value("IOT Application", name, "published") == 1:
 			throw("published_iot_application_cannot_be_deleted!")
+
+		# TODO: check whether the application is belongs to company, thus it only can not deleted by cloud admin
 
 		doc = frappe.get_doc("IOT Application", name)
 		doc.clean_before_delete()

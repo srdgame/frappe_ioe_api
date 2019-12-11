@@ -2,7 +2,7 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for gateway.activity
+# Api for user.activities
 #
 
 from __future__ import unicode_literals
@@ -18,9 +18,8 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "gateway.activity.test"
+		"source": "user.activities.test"
 	})
-
 
 
 '''

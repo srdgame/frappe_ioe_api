@@ -10,6 +10,16 @@ import frappe
 
 from ioe_api.helper import get_post_json_data, throw, as_dict, update_doc, get_doc_as_dict, valid_auth_code
 
+
+@frappe.whitelist(allow_guest=True)
+def test():
+	frappe.response.update({
+		"ok": True,
+		"data": "test_ok_result",
+		"source": "configurations.test"
+	})
+
+
 @frappe.whitelist(allow_guest=True)
 def list(conf_type='Template'):
 	try:
@@ -102,6 +112,8 @@ def remove(name):
 
 		if frappe.get_value("IOT Application Conf", name, "public") == 1:
 			throw("public_application_conf_cannot_be_deleted!")
+
+		# TODO: check whether the application is belongs to company, thus it only can not deleted by cloud admin
 
 		doc = frappe.get_doc("IOT Application Conf", name)
 		doc.clean_before_delete()

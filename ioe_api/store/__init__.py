@@ -2,7 +2,7 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for app store
+# Api for store
 #
 
 from __future__ import unicode_literals

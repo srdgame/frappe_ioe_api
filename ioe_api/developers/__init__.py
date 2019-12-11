@@ -2,7 +2,7 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for applications
+# Api for developers
 #
 
 from __future__ import unicode_literals
@@ -12,47 +12,37 @@ from ioe_api.helper import get_post_json_data, throw, as_dict, update_doc, get_d
 
 
 @frappe.whitelist(allow_guest=True)
-def list(order_by="modified desc"):
-	try:
-		valid_auth_code()
-		devs = []
-		for d in frappe.get_all("IOT Application", "name", order_by=order_by):
-			devs.append(get_doc_as_dict("IOT Application", d.name))
-
-		frappe.response.update({
-			"ok": True,
-			"data": devs
-		})
-	except Exception as ex:
-		frappe.response.update({
-			"ok": False,
-			"error": str(ex)
-		})
-
-
-@frappe.whitelist(allow_guest=True)
-def create():
-	try:
-		valid_auth_code()
-
-		data = get_post_json_data()
-		data.update({
-			"doctype": "App Developer",
-			"user": frappe.session.user,
-			"enabled": 1
-		})
-
-		doc = frappe.get_doc(data).insert()
-
-		frappe.response.update({
-			"ok": True,
-			"data": as_dict(doc)
-		})
-	except Exception as ex:
-		frappe.response.update({
-			"ok": False,
-			"error": str(ex)
-		})
+def test():
+	frappe.response.update({
+		"ok": True,
+		"data": "test_ok_result",
+		"source": "developers.test"
+	})
+#
+#
+# @frappe.whitelist(allow_guest=True)
+# def create():
+# 	try:
+# 		valid_auth_code()
+#
+# 		data = get_post_json_data()
+# 		data.update({
+# 			"doctype": "App Developer",
+# 			"user": frappe.session.user,
+# 			"enabled": 1
+# 		})
+#
+# 		doc = frappe.get_doc(data).insert()
+#
+# 		frappe.response.update({
+# 			"ok": True,
+# 			"data": as_dict(doc)
+# 		})
+# 	except Exception as ex:
+# 		frappe.response.update({
+# 			"ok": False,
+# 			"error": str(ex)
+# 		})
 
 
 @frappe.whitelist(allow_guest=True)

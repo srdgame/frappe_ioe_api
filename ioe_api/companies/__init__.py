@@ -16,7 +16,7 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "company.test"
+		"source": "companies.test"
 	})
 
 

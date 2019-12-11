@@ -12,6 +12,15 @@ from ioe_api.helper import throw, as_dict
 from .versions import copy_forked_app_files
 
 
+@frappe.whitelist(allow_guest=True)
+def test():
+	frappe.response.update({
+		"ok": True,
+		"data": "test_ok_result",
+		"source": "applications.forks.test"
+	})
+
+
 @frappe.whitelist()
 def create(name, version=0, pre_conf=None):
 	try:

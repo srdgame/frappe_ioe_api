@@ -2,7 +2,7 @@
 # Copyright (c) 2019, Dirk Chang and contributors
 # For license information, please see license.txt
 #
-# Api for gateway.conf
+# Api for user.events
 #
 
 from __future__ import unicode_literals
@@ -18,7 +18,7 @@ def test():
 	frappe.response.update({
 		"ok": True,
 		"data": "test_ok_result",
-		"source": "gateway.event.test"
+		"source": "user.events.test"
 	})
 
 
