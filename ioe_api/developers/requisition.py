@@ -127,7 +127,7 @@ def read(name):
 
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("App Developer Requisition", name, keep_docstatus=True)
+			"data": get_doc_as_dict("App Developer Requisition", name, keep_owner=True, keep_docstatus=True)
 		})
 	except Exception as ex:
 		frappe.response.update({
