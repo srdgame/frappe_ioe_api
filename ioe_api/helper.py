@@ -75,7 +75,7 @@ def get_doc_as_dict(doc_type, name, keep_modified=True, keep_owner=False, keep_c
 	except Exception as ex:
 		throw("object_not_found")
 
-	return as_dict(doc, keep_modified=keep_modified, keep_owner=keep_owner, keep_creation=keep_creation, include_tags=include_tags)
+	return as_dict(doc, keep_modified=keep_modified, keep_owner=keep_owner, keep_creation=keep_creation, keep_docstatus=keep_docstatus, include_tags=include_tags)
 
 
 def update_doc(doc_type, d):
