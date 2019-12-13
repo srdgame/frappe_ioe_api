@@ -87,10 +87,18 @@ def create():
 	try:
 		valid_auth_code()
 
+		dev_name = frappe.form_dict.dev_name
+		if not dev_name:
+			username = frappe.get_value("User", frappe.session.user, "username")
+			if not username:
+				username = frappe.session.user.replace('@', '__').replace('.', '_')
+			dev_name = secure_filename(username)
+
 		data = {
 			"doctype": "App Developer Requisition",
 			"user": frappe.session.user,
-			'nickname': frappe.form_dict.nickname,
+			'dev_name': dev_name,
+			'id_name': frappe.form_dict.id_name,
 			'id_card': frappe.form_dict.id_card,
 			'address': frappe.form_dict.address,
 			'pay_bank': frappe.form_dict.pay_bank,
