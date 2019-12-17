@@ -57,6 +57,9 @@ def create():
 			# "published": 0
 		})
 
+		if 'star' in data:
+			data.pop('star')
+
 		doc = frappe.get_doc(data).insert()
 
 		frappe.response.update({
@@ -133,6 +136,9 @@ def update():
 	try:
 		valid_auth_code()
 		data = get_post_json_data()
+
+		if 'star' in data:
+			data.pop('star')
 
 		if frappe.get_value("IOT Application", data.get('name'), 'developer') != frappe.session.user:
 			throw("invalid_permission")
