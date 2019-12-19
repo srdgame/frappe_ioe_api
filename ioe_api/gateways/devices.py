@@ -185,7 +185,8 @@ def data_query(gateway, name, id=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def history_data(gateway, name, input, vt=None, time_condition=None, value_method=None, group_time_span=None, fill_method=None, count_limit=None, time_zone=None):
+def history_data(gateway, name, input, vt='float', time_condition='time > now() - 10m', value_method='raw',
+                 group_time_span='1m', fill_method="none", count_limit=1000, time_zone='Asia/Shanghai'):
 	try:
 		valid_auth_code()
 
@@ -200,7 +201,6 @@ def history_data(gateway, name, input, vt=None, time_condition=None, value_metho
 
 		# -------------------------------------------------------------------------------------------------------------
 		vtdict = {"float": "value", "int": "int_value", "string": "string_value"}
-		vt = vt or "float"
 		field = '"' + vtdict.get(vt) + '"'
 		fields = '"' + vtdict.get(vt) + '"' + ' , "quality"'
 		method = dict(raw=fields, mean='mean(' + field + ')', max='max(' + field + ')', min='min(' + field + ')',
@@ -211,16 +211,11 @@ def history_data(gateway, name, input, vt=None, time_condition=None, value_metho
 		filter = ' "iot"=\'' + gateway + '\' AND "device"=\'' + name + '\''
 		if value_method != "raw":
 			filter = ' "iot"=\'' + gateway + '\' AND "device"=\'' + name + '\'' + ' AND "quality"=0 '
-		group_time_span = group_time_span or "1m"
 
-		time_condition = time_condition or 'time > now() - 10m'
 		time_condition = html.unescape(time_condition)
 
 		# fill_method = "null/previous/none/linear"
-		fill_method = fill_method or "none"
 		group_method = ' GROUP BY time(' + group_time_span + ') FILL(' + fill_method + ')'
-		count = count_limit or 200
-		time_zone = time_zone or 'Asia/Shanghai'
 
 		query = 'SELECT'
 		get_method = method["raw"]
@@ -229,7 +224,7 @@ def history_data(gateway, name, input, vt=None, time_condition=None, value_metho
 		query = query + ' ' + get_method + ' FROM "' + input + '"' + ' WHERE ' + filter + ' AND ' + time_condition
 		if value_method != "raw":
 			query = query + group_method
-		query = query + ' limit ' + str(count) + " tz('" + time_zone + "')"
+		query = query + ' limit ' + str(count_limit) + " tz('" + time_zone + "')"
 
 		domain = frappe.get_value("Cloud Company", doc.company, "domain")
 		r = requests.session().get(inf_server + "/query", params={"q": query, "db": domain}, timeout=10)
