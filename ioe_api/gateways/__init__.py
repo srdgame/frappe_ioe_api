@@ -62,8 +62,8 @@ def list():
 		device_share_list = []
 		for d in frappe.db.get_values("IOT Device Share", {"share_to": user}, "name"):
 			end_time = frappe.get_value("IOT Device Share", d[0], "end_time")
-			if time_diff_in_seconds(get_datetime(), end_time) > 0:
-				device_share_list.append(d[0])
+			if time_diff_in_seconds(end_time, get_datetime()) > 0:
+				device_share_list.append(frappe.get_value("IOT Device Share", d[0], "device"))
 
 		shd_devices.append({"group": "IOT Device Share", "devices": device_share_list, "role": 'Admin'})
 

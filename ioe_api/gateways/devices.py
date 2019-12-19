@@ -188,8 +188,6 @@ def data_query(gateway, name, id=None):
 def history_data(gateway, name, input, vt=None, time_condition=None, value_method=None, group_time_span=None, fill_method=None, count_limit=None, time_zone=None):
 	try:
 		valid_auth_code()
-		from html.parser import HTMLParser
-		html_parser = HTMLParser()
 
 		doc = frappe.get_doc('IOT Device', gateway)
 		if not doc.has_permission("read"):
@@ -200,13 +198,14 @@ def history_data(gateway, name, input, vt=None, time_condition=None, value_metho
 			frappe.logger(__name__).error("InfluxDB Configuration missing in IOTHDBSettings")
 			return
 
-		# ------------------------------------------------------------------------------------------------------------------
+		# -------------------------------------------------------------------------------------------------------------
 		vtdict = {"float": "value", "int": "int_value", "string": "string_value"}
 		vt = vt or "float"
 		field = '"' + vtdict.get(vt) + '"'
 		fields = '"' + vtdict.get(vt) + '"' + ' , "quality"'
-		method = dict(raw=fields, mean='mean(' + field + ')', max='max(' + field + ')', min='min(' + field + ')', first='first(' + field + ')',
-		              last='last(' + field + ')', sum='sum(' + field + ')', count='count(' + field + ')')
+		method = dict(raw=fields, mean='mean(' + field + ')', max='max(' + field + ')', min='min(' + field + ')',
+		              first='first(' + field + ')', last='last(' + field + ')', sum='sum(' + field + ')',
+		              count='count(' + field + ')')
 		if value_method not in ["raw", "mean", "max", "min", "first", "last", "sum", "count"]:
 			value_method = "raw"
 		filter = ' "iot"=\'' + gateway + '\' AND "device"=\'' + name + '\''
