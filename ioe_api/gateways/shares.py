@@ -8,7 +8,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.utils import get_datetime, time_diff_in_seconds
-from ioe_api.helper import valid_auth_code, get_post_json_data, throw, get_doc_as_dict, as_dict
+from ioe_api.helper import valid_auth_code, get_post_json_data, throw, get_doc_as_dict, as_dict, update_doc
 
 
 @frappe.whitelist(allow_guest=True)
@@ -86,6 +86,23 @@ def read(name):
 		frappe.response.update({
 			"ok": True,
 			"data": as_dict(doc)
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def update():
+	try:
+		valid_auth_code()
+		data = get_post_json_data()
+		update_doc("IOT Device Share", data)
+		frappe.response.update({
+			"ok": True,
+			"message": "shared_device_updated"
 		})
 	except Exception as ex:
 		frappe.response.update({
