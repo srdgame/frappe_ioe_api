@@ -11,6 +11,7 @@ import redis
 import json
 import uuid
 from six import text_type, string_types
+from frappe.utils import time_diff_in_seconds, get_datetime
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups as _list_user_groups
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import is_user_in_group as _is_user_in_group
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
@@ -57,6 +58,14 @@ def list():
 			for dev in [d[0] for d in frappe.db.get_values("IOT ShareGroupDevice", {"parent": shared_group}, "device")]:
 				dev_list.append(dev)
 			shd_devices.append({"group": shared_group, "devices": dev_list, "role": role})
+
+		device_share_list = []
+		for d in frappe.db.get_values("IOT Device Share", {"share_to": user}, "name"):
+			end_time = frappe.get_value("IOT Device Share", d[0], "end_time")
+			if time_diff_in_seconds(get_datetime(), end_time) > 0:
+				device_share_list.append(d[0])
+
+		shd_devices.append({"group": "IOT Device Share", "devices": device_share_list, "role": 'Admin'})
 
 		# Get Private Devices
 		pri_devices = [d[0] for d in frappe.db.get_values("IOT Device", {"owner_id": user, "owner_type": "User"}, "name")]
