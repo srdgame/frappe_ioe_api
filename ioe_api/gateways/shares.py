@@ -7,6 +7,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe.utils import get_datetime, time_diff_in_seconds
 from ioe_api.helper import valid_auth_code, get_post_json_data, throw, get_doc_as_dict, as_dict
 
 
@@ -54,6 +55,12 @@ def create():
 
 		if not frappe.has_permission(doctype="IOT Device", doc=data.get("device"), ptype='write'):
 			throw("no_permission")
+
+		''' TODO: Change the permission implementation'''
+		for d in frappe.db.get_values("IOT Device Share", {"device": data.get("device"), "share_to": frappe.session.user}, "name"):
+			end_time = frappe.get_value("IOT Device Share", d[0], "end_time")
+			if time_diff_in_seconds(end_time, get_datetime()) > 0:
+				throw("cannot_share_the_shared_device")
 
 		doc = frappe.get_doc(data).insert()
 
