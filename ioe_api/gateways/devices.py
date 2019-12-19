@@ -11,6 +11,8 @@ import redis
 import json
 import uuid
 import datetime
+import requests
+import html
 from frappe.utils import convert_utc_to_user_timezone
 from iot.iot.doctype.iot_hdb_settings.iot_hdb_settings import IOTHDBSettings
 from iot.device_api import send_action
@@ -175,6 +177,93 @@ def data_query(gateway, name, id=None):
 			"ok": True,
 			"data": ret
 		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def history_data(gateway, name, input, vt=None, time_condition=None, value_method=None, group_time_span=None, fill_method=None, count_limit=None, time_zone=None):
+	try:
+		valid_auth_code()
+		from html.parser import HTMLParser
+		html_parser = HTMLParser()
+
+		doc = frappe.get_doc('IOT Device', gateway)
+		if not doc.has_permission("read"):
+			raise frappe.PermissionError
+
+		inf_server = IOTHDBSettings.get_influxdb_server()
+		if not inf_server:
+			frappe.logger(__name__).error("InfluxDB Configuration missing in IOTHDBSettings")
+			return
+
+		# ------------------------------------------------------------------------------------------------------------------
+		vtdict = {"float": "value", "int": "int_value", "string": "string_value"}
+		vt = vt or "float"
+		field = '"' + vtdict.get(vt) + '"'
+		fields = '"' + vtdict.get(vt) + '"' + ' , "quality"'
+		method = dict(raw=fields, mean='mean(' + field + ')', max='max(' + field + ')', min='min(' + field + ')', first='first(' + field + ')',
+		              last='last(' + field + ')', sum='sum(' + field + ')', count='count(' + field + ')')
+		if value_method not in ["raw", "mean", "max", "min", "first", "last", "sum", "count"]:
+			value_method = "raw"
+		filter = ' "iot"=\'' + gateway + '\' AND "device"=\'' + name + '\''
+		if value_method != "raw":
+			filter = ' "iot"=\'' + gateway + '\' AND "device"=\'' + name + '\'' + ' AND "quality"=0 '
+		group_time_span = group_time_span or "1m"
+
+		time_condition = time_condition or 'time > now() - 10m'
+		time_condition = html.unescape(time_condition)
+
+		# fill_method = "null/previous/none/linear"
+		fill_method = fill_method or "none"
+		group_method = ' GROUP BY time(' + group_time_span + ') FILL(' + fill_method + ')'
+		count = count_limit or 200
+		time_zone = time_zone or 'Asia/Shanghai'
+
+		query = 'SELECT'
+		get_method = method["raw"]
+		if value_method:
+			get_method = method[value_method]
+		query = query + ' ' + get_method + ' FROM "' + input + '"' + ' WHERE ' + filter + ' AND ' + time_condition
+		if value_method != "raw":
+			query = query + group_method
+		query = query + ' limit ' + str(count) + " tz('" + time_zone + "')"
+
+		domain = frappe.get_value("Cloud Company", doc.company, "domain")
+		r = requests.session().get(inf_server + "/query", params={"q": query, "db": domain}, timeout=10)
+		if r.status_code == 200:
+			ret = r.json()
+			# print(ret)
+			if not ret:
+				return
+			results = ret['results']
+			if not results or len(results) < 1:
+				return
+			series = results[0].get('series')
+			if not series or len(series) < 1:
+				return
+			res = series[0].get('values')
+			if not res:
+				return
+			taghis = []
+			if value_method == "raw":
+				for i in range(0, len(res)):
+					hisvalue = {'name': input, 'value': res[i][1], 'time': res[i][0], 'quality': res[i][2], 'device': name}
+					taghis.append(hisvalue)
+			else:
+				for i in range(0, len(res)):
+					hisvalue = {'name': input, 'value': res[i][1], 'time': res[i][0], 'quality': 0, 'device': name}
+					taghis.append(hisvalue)
+
+			frappe.response.update({
+				"ok": True,
+				"data": taghis
+			})
+		else:
+			throw("failed_to_read_history")
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
