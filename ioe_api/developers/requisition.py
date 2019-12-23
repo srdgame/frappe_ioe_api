@@ -75,7 +75,8 @@ def save_image_file(user, image_file, image_name):
 		file_dir = get_requisition_file_path(user_hash)
 
 		new_filename = os.path.join(file_dir, image_name + '.' + ext)  # 修改了上传的文件名
-		os.remove(new_filename) # TODO: Check more
+		if os.path.exists(new_filename):
+			os.remove(new_filename)
 		image_file.save(new_filename)  # 保存文件到upload目录
 		return "/files/{0}/{1}/{2}.{3}".format(DEVELOPER_REQUISITION_FILES, user_hash, image_name, ext)
 	else:

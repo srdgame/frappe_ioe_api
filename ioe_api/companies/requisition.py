@@ -75,7 +75,8 @@ def save_image_file(comp_name, image_file, image_name):
 		file_dir = get_requisition_file_path(comp_name_hash)
 
 		new_filename = os.path.join(file_dir, image_name + '.' + ext)  # 修改了上传的文件名
-		os.remove(new_filename) # TODO: Check more
+		if os.path.exists(new_filename):
+			os.remove(new_filename)
 		image_file.save(new_filename)  # 保存文件到upload目录
 		return "/files/{0}/{1}/{2}.{3}".format(COMPANY_REQUISITION_FILES, comp_name_hash, image_name, ext)
 	else:
@@ -86,6 +87,8 @@ def save_image_file(comp_name, image_file, image_name):
 def create():
 	try:
 		valid_auth_code()
+		if frappe.request.method != "POST":
+			throw("method_must_be_post")
 
 		data = {
 			"doctype": "Cloud Company Requisition",
@@ -101,7 +104,10 @@ def create():
 		if not comp_name:
 			throw("company_name_missing")
 
-		business_licence_file = frappe.request.files['business_licence_file']  # 从表单的file字段获取文件，app_file为该表单的name值
+		if not frappe.request.files:
+			throw("file_not_found")
+
+		business_licence_file = frappe.request.files.get('business_licence_file')  # 从表单的file字段获取文件，app_file为该表单的name值
 		if not business_licence_file:
 			throw("business_licence_image_file_not_attached")
 		business_licence_file_path = save_image_file(comp_name, business_licence_file, 'business_licence')
@@ -161,7 +167,7 @@ def update():
 		})
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def update_business_licence():
 	try:
 		valid_auth_code()
