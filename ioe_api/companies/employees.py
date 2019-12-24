@@ -98,6 +98,10 @@ def invite():
 		if frappe.get_value("Cloud Employee", data.get("user")):
 			throw("user_is_already_joined_other_company")
 
+		to_find = {"user": data.get('user'), "company": data.get('company')}
+		if frappe.get_value("Cloud Employee Invitation", to_find, "docstatus") == 0:
+			throw("user_has_been_invited")
+
 		data.update({
 			"doctype": "Cloud Employee Invitation",
 		})
