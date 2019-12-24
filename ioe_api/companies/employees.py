@@ -61,6 +61,11 @@ def create():
 				"doctype": "Cloud Employee",
 			})
 			doc = frappe.get_doc(data).insert()
+
+			rg = frappe.get_value("Cloud Company Group", {"company": doc.company, "group_name": "root"})
+			if rg:
+				group_doc = frappe.get_doc("Cloud Company Group", rg)
+				group_doc.add_users("user", doc.user)
 		else:
 			data.update({
 				"doctype": "Cloud Employee Invitation",
