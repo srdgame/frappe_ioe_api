@@ -95,7 +95,9 @@ def invite():
 		if frappe.get_value("Cloud Company", data.get('company'), "admin") != frappe.session.user:
 			throw("you_are_not_admin_of_this_company")
 
-		domain = frappe.get_value("Cloud Company", data.get('company'), "domain")
+		if frappe.get_value("Cloud Employee", data.get("user")):
+			throw("user_is_already_joined_other_company")
+
 		data.update({
 			"doctype": "Cloud Employee Invitation",
 		})
