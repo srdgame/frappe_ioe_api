@@ -79,6 +79,40 @@ def create():
 
 
 @frappe.whitelist(allow_guest=True)
+def invite():
+	try:
+		valid_auth_code()
+		data = get_post_json_data()
+
+		if 'Company Admin' not in frappe.get_roles():
+			throw("only_admin_can_create_employee")
+
+		if not data.get("user"):
+			throw("user_id_missing")
+		if not data.get("company"):
+			throw("company_id_missing")
+
+		if frappe.get_value("Cloud Company", data.get('company'), "admin") != frappe.session.user:
+			throw("you_are_not_admin_of_this_company")
+
+		domain = frappe.get_value("Cloud Company", data.get('company'), "domain")
+		data.update({
+			"doctype": "Cloud Employee Invitation",
+		})
+		doc = frappe.get_doc(data).insert()
+
+		frappe.response.update({
+			"ok": True,
+			"data": doc.name
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
+@frappe.whitelist(allow_guest=True)
 def read(name):
 	try:
 		valid_auth_code()
