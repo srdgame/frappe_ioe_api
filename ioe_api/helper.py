@@ -120,6 +120,51 @@ def get_tags(doctype, name):
 # 		}, fields=["tag"])]
 
 
+def __update_tags(doc, tags):
+	"""
+		Adds tags for documents
+		:param doc: Document to be added to global tags
+	"""
+	from frappe.desk.doctype.tag.tag import get_deleted_tags, delete_tag_for_document
+
+	new_tags = list(set([tag.strip() for tag in tags.split(",") if tag]))
+
+	for tag in new_tags:
+		if not frappe.db.exists("Tag Link", {"parenttype": doc.doctype, "parent": doc.name, "tag": tag}):
+			frappe.get_doc({
+				"doctype": "Tag Link",
+				"document_type": doc.doctype,
+				"document_name": doc.name,
+				"parenttype": doc.doctype,
+				"parent": doc.name,
+				"title": doc.get_title() or '',
+				"tag": tag
+			}).insert(ignore_permissions=True)
+
+	existing_tags = [tag.tag for tag in frappe.get_list("Tag Link", filters={
+			"document_type": doc.doctype,
+			"document_name": doc.name,
+		}, fields=["tag"], ignore_permissions=True)]
+	deleted_tags = get_deleted_tags(new_tags, existing_tags)
+
+	if deleted_tags:
+		for tag in deleted_tags:
+			delete_tag_for_document(doc.doctype, doc.name, tag)
+
+
 def update_tags(doc, tags):
-	from frappe.desk.doctype.tag.tag import update_tags as _update_tags
-	return _update_tags(doc, tags)
+	from frappe.desk.doctype.tag.tag import update_tags as _update_tags, add_tag as _add_tag, remove_tag as _remove_tag
+
+	new_tags = list(set([tag.strip() for tag in tags.split(",") if tag]))
+
+	old_tags = get_tags(doc.doctype, doc.name)
+	# for tag in list(set([tag.strip() for tag in tags.split(",") if tag])):
+	# 	if tag not in new_tags:
+	# 		_remove_tag(tag, doc.doctype, doc.name)
+
+	for tag in new_tags:
+		print("Adding", tag)
+		if tag not in old_tags:
+			frappe.get_doc({"doctype": "Tag", "name": tag}).insert(ignore_permissions=True)
+	# return True
+	return __update_tags(doc, tags)
