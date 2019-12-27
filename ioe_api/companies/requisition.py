@@ -97,7 +97,9 @@ def create():
 			'full_name': frappe.form_dict.full_name,
 			'credit_code': frappe.form_dict.credit_code,
 			'domain': frappe.form_dict.domain,
-			'telephone': frappe.form_dict.telephone
+			'telephone': frappe.form_dict.telephone,
+			'address': frappe.form_dict.address,
+			'contact': frappe.form_dict.contact
 		}
 
 		comp_name = data.get("comp_name")
