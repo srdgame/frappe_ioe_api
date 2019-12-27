@@ -109,12 +109,12 @@ def create():
 		if not frappe.request.files:
 			throw("file_not_found")
 
-		business_licence_file = frappe.request.files.get('business_licence_file')  # 从表单的file字段获取文件，app_file为该表单的name值
-		if not business_licence_file:
-			throw("business_licence_image_file_not_attached")
-		business_licence_file_path = save_image_file(comp_name, business_licence_file, 'business_licence')
+		business_license_file = frappe.request.files.get('business_license_file')  # 从表单的file字段获取文件，app_file为该表单的name值
+		if not business_license_file:
+			throw("business_license_image_file_not_attached")
+		business_license_file_path = save_image_file(comp_name, business_license_file, 'business_license')
 		data.update({
-			'business_licence': business_licence_file_path
+			'business_license': business_license_file_path
 		})
 
 		doc = frappe.get_doc(data).insert()
