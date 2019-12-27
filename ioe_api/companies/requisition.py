@@ -53,7 +53,7 @@ def list():
 		apps = []
 		filters = {"owner": frappe.session.user}
 		for d in frappe.get_all("Cloud Company Requisition", "name", filters=filters, order_by="modified desc"):
-			apps.append(as_dict(frappe.get_doc("Cloud Company Requisition", d.name), keep_owner=True))
+			apps.append(as_dict(frappe.get_doc("Cloud Company Requisition", d.name), keep_owner=True, keep_docstatus=True))
 
 		frappe.response.update({
 			"ok": True,
@@ -137,7 +137,7 @@ def read(name):
 
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("Cloud Company Requisition", name)
+			"data": get_doc_as_dict("Cloud Company Requisition", name, keep_owner=True, keep_docstatus=True)
 		})
 	except Exception as ex:
 		frappe.response.update({
