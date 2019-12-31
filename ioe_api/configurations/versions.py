@@ -20,6 +20,15 @@ def test():
 	})
 
 
+def valid_conf_owner(conf):
+	if frappe.session.user == 'Administrator':
+		return
+	if "App Manager" in frappe.get_roles():
+		return
+	if frappe.get_value('IOT Application Conf', conf, 'developer') != frappe.session.user:
+		throw("has_no_permission")
+
+
 @frappe.whitelist(allow_guest=True)
 def list(conf):
 	try:
@@ -45,6 +54,8 @@ def create(conf, version, data, comment):
 		valid_auth_code()
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
+
+		valid_conf_owner(conf)
 
 		doc = frappe.get_doc({
 			"doctype": "IOT Application Conf Version",
@@ -100,6 +111,9 @@ def latest(conf):
 def remove(name):
 	try:
 		valid_auth_code()
+
+		valid_conf_owner(name)
+
 		frappe.delete_doc("IOT Application Conf Version", name)
 		frappe.response.update({
 			"ok": True,
