@@ -37,7 +37,7 @@ def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 	modified = get_datetime((conf_doc.modified))
 
 	params = "_w_appid=" + _w_appid + "&_w_conf_name=" + _w_conf_name + "&_w_conf_version=" + _w_conf_version + \
-	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_userid=" + _w_userid + "_w_sid=" + _w_sid
+	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_sid=" + _w_sid + "&_w_userid=" + _w_userid
 
 	file_info = {
 		"id": _w_conf_name,
@@ -91,7 +91,7 @@ def save(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 		doc = frappe.get_doc(version_data).insert()
 
 	params = "_w_appid=" + _w_appid + "&_w_conf_name=" + _w_conf_name + "&_w_conf_version=" + _w_conf_version + \
-	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_userid=" + _w_userid + "_w_sid=" + _w_sid
+	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_sid=" + _w_sid + "&_w_userid=" + _w_userid
 
 	frappe.response.update({
 		"file": {
