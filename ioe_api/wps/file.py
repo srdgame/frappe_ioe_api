@@ -58,11 +58,6 @@ def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 		"permission": "write" if conf_doc.developer == frappe.session.user else "read"
 	}
 
-	frappe.logger(__name__).debug(_("WPS File Info {0}").format({
-		"file": file_info,
-		"user": user_info
-	}))
-
 	frappe.response.update({
 		"file": file_info,
 		"user": user_info
