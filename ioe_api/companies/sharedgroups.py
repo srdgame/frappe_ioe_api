@@ -12,6 +12,7 @@ from iot.iot.doctype.iot_share_group.iot_share_group import add_user as _add_use
 from iot.iot.doctype.iot_share_group.iot_share_group import remove_user as _remove_user
 from iot.iot.doctype.iot_share_group.iot_share_group import add_device as _add_device
 from iot.iot.doctype.iot_share_group.iot_share_group import remove_device as _remove_device
+from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
 
 @frappe.whitelist(allow_guest=True)
 def test():
@@ -52,16 +53,17 @@ def create():
 		valid_auth_code()
 		data = get_post_json_data()
 
-		if 'Company Admin' not in frappe.get_roles():
-			throw("only_admin_can_create_shared_group")
+		# TODO: Enable all employee to create/edit/delete for now!
+		# if 'Company Admin' not in frappe.get_roles():
+		# 	throw("only_admin_can_create_shared_group")
+
+		# if frappe.get_value("Cloud Company", data.get('company'), "admin") != frappe.session.user:
+		# 	throw("you_are_not_admin_of_this_company")
 
 		if not data.get("group_name"):
 			throw("group_name_missing")
 		if not data.get("company"):
 			throw("company_id_missing")
-
-		if frappe.get_value("Cloud Company", data.get('company'), "admin") != frappe.session.user:
-			throw("you_are_not_admin_of_this_company")
 
 		data.update({
 			"doctype": "IOT Share Group",
@@ -99,8 +101,11 @@ def read(name):
 def update(name, group_name, description, role): #, users=None, devices=None):
 	try:
 		valid_auth_code()
-		if 'Company Admin' not in frappe.get_roles():
-			throw("only_admin_can_update_shared_group")
+
+		# TODO: Enable all employee to create/edit/delete for now!
+		# if 'Company Admin' not in frappe.get_roles():
+		# 	throw("only_admin_can_update_shared_group")
+
 		data = {
 			"name": name,
 			"group_name": group_name,
@@ -135,8 +140,10 @@ def update(name, group_name, description, role): #, users=None, devices=None):
 def remove(name):
 	try:
 		valid_auth_code()
-		if 'Company Admin' not in frappe.get_roles():
-			throw("only_admin_can_remove_shared_group")
+
+		# TODO: Enable all employee to create/edit/delete for now!
+		# if 'Company Admin' not in frappe.get_roles():
+		# 	throw("only_admin_can_remove_shared_group")
 
 		frappe.delete_doc("IOT Share Group", name)
 		frappe.response.update({
@@ -154,8 +161,10 @@ def remove(name):
 def add_user(name, user, comment):
 	try:
 		valid_auth_code()
-		if 'Company Admin' not in frappe.get_roles():
-			throw("not_permitted")
+
+		# TODO: Enable all employee to create/edit/delete for now!
+		# if 'Company Admin' not in frappe.get_roles():
+		# 	throw("not_permitted")
 
 		_add_user(name, user, comment)
 		frappe.response.update({
@@ -173,8 +182,10 @@ def add_user(name, user, comment):
 def remove_user(name, user):
 	try:
 		valid_auth_code()
-		if 'Company Admin' not in frappe.get_roles():
-			throw("not_permitted")
+
+		# TODO: Enable all employee to create/edit/delete for now!
+		# if 'Company Admin' not in frappe.get_roles():
+		# 	throw("not_permitted")
 
 		_remove_user(name, user)
 		frappe.response.update({
@@ -192,8 +203,10 @@ def remove_user(name, user):
 def add_device(name, device):
 	try:
 		valid_auth_code()
-		if 'Company Admin' not in frappe.get_roles():
-			throw("not_permitted")
+
+		# TODO: Enable all employee to create/edit/delete for now!
+		# if 'Company Admin' not in frappe.get_roles():
+		# 	throw("not_permitted")
 
 		_add_device(name, device)
 		frappe.response.update({
@@ -211,8 +224,10 @@ def add_device(name, device):
 def remove_device(name, device):
 	try:
 		valid_auth_code()
-		if 'Company Admin' not in frappe.get_roles():
-			throw("not_permitted")
+
+		# TODO: Enable all employee to create/edit/delete for now!
+		# if 'Company Admin' not in frappe.get_roles():
+		# 	throw("not_permitted")
 
 		_remove_device(name, device)
 		frappe.response.update({
