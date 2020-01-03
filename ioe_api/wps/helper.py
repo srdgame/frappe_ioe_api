@@ -36,12 +36,12 @@ def hash_hmac(ac_key, text):
 
 def get_signature(appid, appkey, user, sid, conf, version, version_new):
 	contents = "_w_appid=" + appid + "_w_conf_name=" + conf + "_w_conf_version=" + version + \
-	           "_w_conf_version_new=" + version_new +  "_w_secretkey=" + appkey + "_w_sid=" + sid + \
-	           "_w_tokentype=1_w_userid=" + user
+	           "_w_conf_version_new=" + version_new + "_w_sid=" + sid + \
+	           "_w_tokentype=1_w_userid=" + user +  "_w_secretkey=" + appkey
 	b64 = hash_hmac(appkey.encode(), contents.encode()).decode()
 	new = "_w_appid=" + appid + "&_w_conf_name=" + conf + "&_w_conf_version=" + version  + \
-	      "&_w_conf_version_new=" + version_new + "&_w_sid=" + sid + '&_w_signature=' + quote(b64) + \
-	      "&_w_tokentype=1&_w_userid=" + user
+	      "&_w_conf_version_new=" + version_new + "&_w_sid=" + sid + \
+	      "&_w_tokentype=1&_w_userid=" + user + '&_w_signature=' + quote(b64)
 	return 'https://wwo.wps.cn/office/s/' + str(int(time())) + '?' + new
 
 
