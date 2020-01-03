@@ -24,25 +24,25 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
-	valid_weboffice_token(_w_userid, _w_sid)
+def info(_w_appid, _w_conf_name, _w_signature, userid, sid, conf_version, conf_version_new):
+	valid_weboffice_token(userid, sid)
 	_w_conf_name = _w_conf_name or frappe.get_request_header("x-weboffice-file-id")
 
 	conf_doc = frappe.get_doc("IOT Application Conf", _w_conf_name)
 	if conf_doc.public == 0 and conf_doc.developer != frappe.session.user:
 		throw("has_no_permission")
 
-	data = app_conf_data(conf_doc.name, _w_conf_version)
+	data = app_conf_data(conf_doc.name, conf_version)
 	creation = get_datetime(conf_doc.creation)
 	modified = get_datetime((conf_doc.modified))
 
-	params = "_w_appid=" + _w_appid + "&_w_conf_name=" + _w_conf_name + "&_w_conf_version=" + _w_conf_version + \
-	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_userid=" + _w_userid + "_w_sid=" + _w_sid
+	params = "_w_appid=" + _w_appid + "&_w_conf_name=" + _w_conf_name + "&conf_version=" + conf_version + \
+	         "&conf_version_new=" + conf_version_new + "&userid=" + userid + "sid=" + sid
 
 	file_info = {
 		"id": _w_conf_name,
 		"name": conf_doc.app + "-" + conf_doc.name + ".csv",
-		"version": _w_conf_version_new,
+		"version": conf_version_new,
 		"size": len(data),
 		"creator": conf_doc.owner,
 		"create_time": int(creation.timestamp()),
@@ -63,8 +63,8 @@ def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 
 
 @frappe.whitelist(allow_guest=True)
-def save(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
-	valid_weboffice_token(_w_userid, _w_sid)
+def save(_w_appid, _w_conf_name, _w_signature, userid, sid, conf_version, conf_version_new):
+	valid_weboffice_token(userid, sid)
 
 	conf_doc = frappe.get_doc("IOT Application Conf", _w_conf_name)
 
@@ -84,19 +84,19 @@ def save(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 		version_data = {
 			"doctype": "IOT Application Conf Version",
 			"conf": _w_conf_name,
-			"version": _w_conf_version_new,
+			"version": conf_version_new,
 			"comment": "Save from WPS",
 			"data": file_data
 		}
 		doc = frappe.get_doc(version_data).insert()
 
-	params = "_w_appid=" + _w_appid + "&_w_conf_name=" + _w_conf_name + "&_w_conf_version=" + _w_conf_version + \
-	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_userid=" + _w_userid + "_w_sid=" + _w_sid
+	params = "_w_appid=" + _w_appid + "&_w_conf_name=" + _w_conf_name + "&conf_version=" + conf_version + \
+	         "&conf_version_new=" + conf_version_new + "&userid=" + userid + "sid=" + sid
 
 	frappe.response.update({
 		"file": {
 			"id": _w_conf_name,
-			"version": _w_conf_version_new,
+			"version": conf_version_new,
 			"size": file_size,
 			"download_url": "http://cloud.thingsroot.com/v1/3rd/file/content?" + params
 		}
@@ -118,24 +118,24 @@ def fire_raw_content(content, status=200, content_type='text/html'):
 
 
 @frappe.whitelist(allow_guest=True)
-def content(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
-	valid_weboffice_token(_w_userid, _w_sid)
+def content(_w_appid, _w_conf_name, userid, sid, conf_version, conf_version_new):
+	valid_weboffice_token(userid, sid)
 
 	conf_doc = frappe.get_doc("IOT Application Conf", _w_conf_name)
 	if conf_doc.public == 0 and conf_doc.developer != frappe.session.user:
 		throw("has_no_permission")
 
-	data = app_conf_data(conf_doc.name, _w_conf_version)
+	data = app_conf_data(conf_doc.name, conf_version)
 	return fire_raw_content(data)
 
 
 @frappe.whitelist(allow_guest=True)
-def online(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
+def online(_w_appid, _w_conf_name, _w_signature, userid, sid, conf_version, conf_version_new):
 	return True
 
 
 @frappe.whitelist(allow_guest=True)
-def version(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
+def version(_w_appid, _w_conf_name, _w_signature, userid, sid, conf_version, conf_version_new):
 	throw("no_implementation")
 
 
