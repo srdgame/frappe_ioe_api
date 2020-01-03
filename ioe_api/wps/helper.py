@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import frappe
 import base64
+from frappe import _
 from hmac import new as hmac
 from time import sleep, time
 from urllib.parse import quote, unquote
@@ -48,6 +49,9 @@ def valid_weboffice_token(user, sid, token=None):
 	if 'Guest' != frappe.session.user:
 		return
 	token = token or frappe.get_request_header("x-wps-weboffice-token")
+
+	frappe.logger(__name__).debug(_("WPS Auth user {0} sid {1} token {2}").format(user, sid, token))
+
 	if not sid or not token:
 		throw("token_information_missing")
 
