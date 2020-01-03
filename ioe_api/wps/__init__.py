@@ -27,7 +27,14 @@ def test():
 @frappe.whitelist(allow_guest=True)
 def wps_url(conf, version, version_new):
 	valid_auth_code()
-	return get_signature(WPS_APPID, WPS_APPKEY, frappe.session.user, frappe.session.sid, conf, version, version_new)
+	token = frappe.sessions.get_csrf_token()
+	frappe.db.commit()
+
+	frappe.response.update({
+		"ok": True,
+		"url": get_signature(WPS_APPID, WPS_APPKEY, frappe.session.user, frappe.session.sid, conf, version, version_new),
+		"token": token
+	})
 
 
 @frappe.whitelist(allow_guest=True)
