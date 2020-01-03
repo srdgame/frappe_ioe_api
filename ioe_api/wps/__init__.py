@@ -28,9 +28,11 @@ def test():
 def wps_url(conf, version, version_new):
 	valid_auth_code()
 
+	code = frappe.get_value("IOT User Api", frappe.session.user, "authorization_code")
+
 	frappe.response.update({
 		"ok": True,
-		"url": get_signature(WPS_APPID, WPS_APPKEY, frappe.session.user, frappe.session.sid, conf, version, version_new),
+		"url": get_signature(WPS_APPID, WPS_APPKEY, code, conf, version, version_new),
 		"token": ''
 	})
 
