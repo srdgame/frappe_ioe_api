@@ -13,6 +13,7 @@ from time import time
 from frappe.utils import get_datetime, get_fullname
 from conf_center.api import get_latest_version, app_conf_data
 from .helper import valid_weboffice_token
+from ioe_api.helper import valid_auth_code
 
 
 @frappe.whitelist(allow_guest=True)
@@ -25,8 +26,8 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
-	valid_weboffice_token(_w_userid, _w_sid)
+def info(_w_appid, _w_access_key, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
+	valid_auth_code(_w_access_key)
 	_w_conf_name = _w_conf_name or frappe.get_request_header("x-weboffice-file-id")
 
 	conf_doc = frappe.get_doc("IOT Application Conf", _w_conf_name)
@@ -37,9 +38,9 @@ def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 	creation = get_datetime(conf_doc.creation)
 	modified = get_datetime((conf_doc.modified))
 
+
 	params = "_w_appid=" + _w_appid + "&_w_conf_name=" + _w_conf_name + "&_w_conf_version=" + _w_conf_version + \
-	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_sid=" + _w_sid + "&_w_userid=" + _w_userid + \
-	         "&_w_token=" + frappe.local.session.data.csrf_token
+	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_access_key=" + _w_access_key
 
 	file_info = {
 		"id": _w_conf_name,
@@ -65,8 +66,8 @@ def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 
 
 @frappe.whitelist(allow_guest=True)
-def save(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
-	valid_weboffice_token(_w_userid, _w_sid)
+def save(_w_appid, _w_access_key, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
+	valid_auth_code(_w_access_key)
 
 	conf_doc = frappe.get_doc("IOT Application Conf", _w_conf_name)
 
@@ -93,7 +94,7 @@ def save(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 		doc = frappe.get_doc(version_data).insert()
 
 	params = "_w_appid=" + _w_appid + "&_w_conf_name=" + _w_conf_name + "&_w_conf_version=" + _w_conf_version + \
-	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_sid=" + _w_sid + "&_w_userid=" + _w_userid
+	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_access_key=" + _w_access_key
 
 	frappe.response.update({
 		"file": {
@@ -120,8 +121,8 @@ def fire_raw_content(content, status=200, content_type='text/html'):
 
 
 @frappe.whitelist(allow_guest=True)
-def content(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_token):
-	valid_weboffice_token(_w_userid, _w_sid, _w_token)
+def content(_w_appid, _w_access_key, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_token):
+	valid_auth_code(_w_access_key)
 
 	conf_doc = frappe.get_doc("IOT Application Conf", _w_conf_name)
 	if conf_doc.public == 0 and conf_doc.developer != frappe.session.user:
@@ -132,12 +133,12 @@ def content(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_
 
 
 @frappe.whitelist(allow_guest=True)
-def online(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
+def online(_w_appid, _w_access_key, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
 	return True
 
 
 @frappe.whitelist(allow_guest=True)
-def version(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
+def version(_w_appid, _w_access_key, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
 	throw("no_implementation")
 
 

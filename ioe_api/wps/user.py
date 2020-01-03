@@ -10,7 +10,7 @@ import frappe
 from frappe import throw, _
 from frappe.utils import get_fullname
 from .helper import valid_weboffice_token
-from ioe_api.helper import get_post_json_data
+from ioe_api.helper import get_post_json_data, valid_auth_code
 
 
 @frappe.whitelist(allow_guest=True)
@@ -23,8 +23,8 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def info(_w_appid, _w_conf_name, _w_userid, _w_sid, _w_signature):
-	valid_weboffice_token(_w_userid, _w_sid)
+def info(_w_appid, _w_conf_name, _w_access_key, _w_signature):
+	valid_auth_code(_w_access_key)
 	_w_conf_name = _w_conf_name or frappe.get_request_header("x-weboffice-file-id")
 
 	data = get_post_json_data()
