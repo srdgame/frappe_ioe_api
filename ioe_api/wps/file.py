@@ -74,11 +74,11 @@ def save(_w_appid, _w_access_key, _w_conf_name, _w_conf_version, _w_conf_version
 	if conf_doc.developer != frappe.session.user:
 		throw("has_no_permission")
 
-	uplaod_file = frappe.request.files['file']
-	file_data = uplaod_file.stream.read().decode('utf-8')
+	upload_file = frappe.request.files['file']
+	file_data = upload_file.stream.read().decode('utf-8')
 	file_size = len(file_data)
 
-	ver = frappe.get_value("IOT Application Conf Version", filters={"conf": _w_conf_name, "version": int(version)})
+	ver = frappe.get_value("IOT Application Conf Version", filters={"conf": _w_conf_name, "version": int(_w_conf_version_new)})
 	if ver:
 		doc = frappe.get_doc("IOT Application Conf Version", ver)
 		doc.set("data", file_data)
@@ -87,7 +87,7 @@ def save(_w_appid, _w_access_key, _w_conf_name, _w_conf_version, _w_conf_version
 		version_data = {
 			"doctype": "IOT Application Conf Version",
 			"conf": _w_conf_name,
-			"version": _w_conf_version_new,
+			"version": int(_w_conf_version_new),
 			"comment": "Save from WPS",
 			"data": file_data
 		}
