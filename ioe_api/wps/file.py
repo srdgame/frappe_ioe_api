@@ -39,7 +39,8 @@ def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 	utc_second = int(time())
 
 	params = "_w_appid=" + _w_appid + "&_w_conf_name=" + _w_conf_name + "&_w_conf_version=" + _w_conf_version + \
-	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_sid=" + _w_sid + "&_w_userid=" + _w_userid
+	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_sid=" + _w_sid + "&_w_userid=" + _w_userid + \
+	         "&_w_token=" + frappe.local.session.data.csrf_token
 
 	file_info = {
 		"id": _w_conf_name,
@@ -125,8 +126,8 @@ def fire_raw_content(content, status=200, content_type='text/html'):
 
 
 @frappe.whitelist(allow_guest=True)
-def content(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new):
-	valid_weboffice_token(_w_userid, _w_sid)
+def content(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_token):
+	valid_weboffice_token(_w_userid, _w_sid, _w_token)
 
 	conf_doc = frappe.get_doc("IOT Application Conf", _w_conf_name)
 	if conf_doc.public == 0 and conf_doc.developer != frappe.session.user:
