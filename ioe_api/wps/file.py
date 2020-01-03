@@ -101,8 +101,8 @@ def save(_w_appid, _w_access_key, _w_conf_name, _w_conf_version, _w_conf_version
 	frappe.response.update({
 		"file": {
 			"id": _w_conf_name,
-			"version": _w_conf_version_new,
-			"size": file_size,
+			"version": int(_w_conf_version_new),
+			"size": int(file_size),
 			"download_url": "https://cloud.thingsroot.com/v1/3rd/file/content?" + params
 		}
 	})
