@@ -190,7 +190,7 @@ def logout():
 def update(name, email, phone, first_name, last_name, username=None, mobile_no=None):
 	try:
 		if 'Guest' == frappe.session.user:
-			throw("no_permission")
+			throw("has_no_permission")
 
 		user = frappe.get_doc("User", name)
 		user.update({

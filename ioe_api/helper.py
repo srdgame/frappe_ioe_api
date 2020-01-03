@@ -157,13 +157,13 @@ def update_tags(doc, tags):
 
 	new_tags = list(set([tag.strip() for tag in tags.split(",") if tag]))
 
-	old_tags = get_tags(doc.doctype, doc.name)
+	old_tags = list_tags(doc.doctype)
 	# for tag in list(set([tag.strip() for tag in tags.split(",") if tag])):
 	# 	if tag not in new_tags:
 	# 		_remove_tag(tag, doc.doctype, doc.name)
 
 	for tag in new_tags:
-		print("Adding", tag)
+		# print("Adding", tag)
 		if tag not in old_tags:
 			frappe.get_doc({"doctype": "Tag", "name": tag}).insert(ignore_permissions=True)
 	# return True

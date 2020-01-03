@@ -26,7 +26,7 @@ def list(name):
 		valid_auth_code()
 
 		if not frappe.has_permission(doctype="IOT Device", doc=name, ptype='write'):
-			throw("no_permission")
+			throw("has_no_permission")
 
 		share_list = []
 		for d in frappe.db.get_values("IOT Device Share", {"device": name}, "name"):
@@ -54,7 +54,7 @@ def create():
 		})
 
 		if not frappe.has_permission(doctype="IOT Device", doc=data.get("device"), ptype='write'):
-			throw("no_permission")
+			throw("has_no_permission")
 
 		''' TODO: Change the permission implementation'''
 		for d in frappe.db.get_values("IOT Device Share", {"device": data.get("device"), "share_to": frappe.session.user}, "name"):
@@ -81,7 +81,7 @@ def read(name):
 		valid_auth_code()
 		doc = frappe.get_doc("IOT Device Share", name)
 		if doc.has_permission("write"):
-			throw("no_permission")
+			throw("has_no_permission")
 
 		frappe.response.update({
 			"ok": True,
