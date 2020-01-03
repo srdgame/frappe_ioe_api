@@ -46,7 +46,8 @@ def get_signature(appid, appkey, user, sid, conf, version, version_new):
 
 
 def valid_weboffice_token(user, sid, token=None):
-	if 'Guest' != frappe.session.user:
+	if 'Guest' != frappe.session.user and frappe.session.user == user:
+		frappe.logger(__name__).debug(_("WPS Auth user {0} passed").format(user))
 		return
 	token = token or frappe.get_request_header("x-wps-weboffice-token")
 
