@@ -121,7 +121,7 @@ def fire_raw_content(content, status=200, content_type='text/html'):
 
 
 @frappe.whitelist(allow_guest=True)
-def content(_w_appid, _w_access_key, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_token):
+def content(_w_appid, _w_access_key, _w_conf_name, _w_conf_version, _w_conf_version_new):
 	valid_auth_code(_w_access_key)
 
 	conf_doc = frappe.get_doc("IOT Application Conf", _w_conf_name)
