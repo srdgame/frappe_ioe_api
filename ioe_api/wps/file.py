@@ -44,7 +44,7 @@ def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 	file_info = {
 		"id": _w_conf_name,
 		"name": conf_doc.app + "-" + conf_doc.name + ".csv",
-		"version": _w_conf_version_new,
+		"version": int(_w_conf_version_new),
 		"size": len(data.get('data') or ''),
 		"creator": conf_doc.owner,
 		"create_time": int(creation.timestamp()),
