@@ -30,4 +30,6 @@ def wps_url(conf, version, version_new):
 
 @frappe.whitelist(allow_guest=True)
 def onnotify():
-	return True
+	return {
+		"msg": "success"
+	}
