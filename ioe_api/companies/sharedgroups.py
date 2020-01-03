@@ -24,8 +24,11 @@ def test():
 
 
 def list_company_shared_groups(company):
-	if 'Company Admin' not in frappe.get_roles():
-		return []
+	# if 'Company Admin' not in frappe.get_roles():
+	# 	return []
+
+	if company not in list_user_companies(frappe.session.user):
+		throw("you_are_not_in_this_company")
 
 	return [d[0] for d in frappe.db.get_values("IOT Share Group", {"company": company}, "name")]
 
