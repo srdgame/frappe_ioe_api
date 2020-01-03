@@ -36,7 +36,6 @@ def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 	data = app_conf_data(conf_doc.name, _w_conf_version)
 	creation = get_datetime(conf_doc.creation)
 	modified = get_datetime((conf_doc.modified))
-	utc_second = int(time())
 
 	params = "_w_appid=" + _w_appid + "&_w_conf_name=" + _w_conf_name + "&_w_conf_version=" + _w_conf_version + \
 	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_sid=" + _w_sid + "&_w_userid=" + _w_userid + \
@@ -46,11 +45,11 @@ def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 		"id": _w_conf_name,
 		"name": conf_doc.app + "-" + conf_doc.name + ".csv",
 		"version": _w_conf_version_new,
-		"size": len(data),
+		"size": len(data.get('data') or ''),
 		"creator": conf_doc.owner,
-		"create_time": utc_second, # int(creation.timestamp()),
+		"create_time": int(creation.timestamp()),
 		"modifier": conf_doc.developer,
-		"modify_time": utc_second, # int(modified.timestamp()),
+		"modify_time": int(modified.timestamp()),
 		"download_url": "https://cloud.thingsroot.com/v1/3rd/file/content?" + params
 	}
 	user_info = {
