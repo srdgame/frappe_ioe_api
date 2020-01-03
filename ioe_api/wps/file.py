@@ -133,7 +133,7 @@ def content(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_
 		throw("has_no_permission")
 
 	data = app_conf_data(conf_doc.name, _w_conf_version)
-	return fire_raw_content(data)
+	return fire_raw_content(data.data)
 
 
 @frappe.whitelist(allow_guest=True)
