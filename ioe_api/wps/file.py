@@ -9,6 +9,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import throw, _
+from time import time
 from frappe.utils import get_datetime, get_fullname
 from conf_center.api import get_latest_version, app_conf_data
 from .helper import valid_weboffice_token
@@ -35,6 +36,7 @@ def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 	data = app_conf_data(conf_doc.name, _w_conf_version)
 	creation = get_datetime(conf_doc.creation)
 	modified = get_datetime((conf_doc.modified))
+	utc_second = int(time())
 
 	params = "_w_appid=" + _w_appid + "&_w_conf_name=" + _w_conf_name + "&_w_conf_version=" + _w_conf_version + \
 	         "&_w_conf_version_new=" + _w_conf_version_new + "&_w_sid=" + _w_sid + "&_w_userid=" + _w_userid
@@ -45,16 +47,21 @@ def info(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 		"version": _w_conf_version_new,
 		"size": len(data),
 		"creator": conf_doc.owner,
-		"create_time": int(creation.timestamp()),
+		"create_time": utc_second, # int(creation.timestamp()),
 		"modifier": conf_doc.developer,
-		"modify_time": int(modified.timestamp()),
-		"download_url": "http://cloud.thingsroot.com/v1/3rd/file/content?" + params
+		"modify_time": utc_second, # int(modified.timestamp()),
+		"download_url": "https://cloud.thingsroot.com/v1/3rd/file/content?" + params
 	}
 	user_info = {
 		"id": frappe.session.user,
 		"name": get_fullname(frappe.session.user),
 		"permission": "write" if conf_doc.developer == frappe.session.user else "read"
 	}
+
+	frappe.logger(__name__).debug(_("WPS File Info {0}").format({
+		"file": file_info,
+		"user": user_info
+	}))
 
 	frappe.response.update({
 		"file": file_info,
@@ -98,7 +105,7 @@ def save(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_ver
 			"id": _w_conf_name,
 			"version": _w_conf_version_new,
 			"size": file_size,
-			"download_url": "http://cloud.thingsroot.com/v1/3rd/file/content?" + params
+			"download_url": "https://cloud.thingsroot.com/v1/3rd/file/content?" + params
 		}
 	})
 
@@ -118,7 +125,7 @@ def fire_raw_content(content, status=200, content_type='text/html'):
 
 
 @frappe.whitelist(allow_guest=True)
-def content(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new, _w_signature):
+def content(_w_appid, _w_userid, _w_sid, _w_conf_name, _w_conf_version, _w_conf_version_new):
 	valid_weboffice_token(_w_userid, _w_sid)
 
 	conf_doc = frappe.get_doc("IOT Application Conf", _w_conf_name)
