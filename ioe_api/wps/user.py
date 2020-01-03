@@ -23,8 +23,8 @@ def test():
 
 
 @frappe.whitelist(allow_guest=True)
-def info(_w_appid, _w_conf_name, _w_signature, userid, sid, conf_version, conf_version_new):
-	valid_weboffice_token(userid, sid)
+def info(_w_appid, _w_conf_name, _w_userid, _w_sid, _w_signature):
+	valid_weboffice_token(_w_userid, _w_sid)
 	_w_conf_name = _w_conf_name or frappe.get_request_header("x-weboffice-file-id")
 
 	data = get_post_json_data()
