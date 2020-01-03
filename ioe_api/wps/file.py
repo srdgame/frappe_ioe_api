@@ -74,7 +74,9 @@ def save(_w_appid, _w_access_key, _w_conf_name, _w_conf_version, _w_conf_version
 	if conf_doc.developer != frappe.session.user:
 		throw("has_no_permission")
 
-	upload_file = frappe.request.files['file']
+	upload_file = frappe.request.files.get('file')
+	if not upload_file:
+		throw("file_missing")
 	file_data = upload_file.stream.read().decode('utf-8')
 	file_size = len(file_data)
 
