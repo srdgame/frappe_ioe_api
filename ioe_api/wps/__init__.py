@@ -27,6 +27,7 @@ def test():
 @frappe.whitelist(allow_guest=True)
 def wps_url(conf, version, version_new):
 	valid_auth_code()
+	frappe.local.login_manager.login_as(frappe.session.user)
 	token = frappe.sessions.get_csrf_token()
 	frappe.db.commit()
 
