@@ -101,7 +101,7 @@ def read(name):
 
 
 @frappe.whitelist(allow_guest=True)
-def update(name, group_name, description, role): #, users=None, devices=None):
+def update(name, group_name, role): #, users=None, devices=None):
 	try:
 		valid_auth_code()
 
@@ -112,7 +112,6 @@ def update(name, group_name, description, role): #, users=None, devices=None):
 		data = {
 			"name": name,
 			"group_name": group_name,
-			"description": description,
 			"role": role
 		}
 		post_data = get_post_json_data()

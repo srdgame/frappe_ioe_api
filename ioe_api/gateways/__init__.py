@@ -201,7 +201,6 @@ def remove():
 		})
 
 
-
 @frappe.whitelist(allow_guest=True)
 def exec_result(id):
 	try:
