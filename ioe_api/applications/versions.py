@@ -157,7 +157,7 @@ def create():
 				got_ver = editor_worksapce_version(app)
 				if got_ver != version:
 					os.remove(new_filename)
-					return editor_release(app, version, comment)
+					editor_release(app, version, comment)
 
 			data = {
 				"doctype": "IOT Application Version",
