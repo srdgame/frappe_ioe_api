@@ -152,12 +152,12 @@ def create():
 			Check version file (and automatically correct it?) Only for user application
 			'''
 			if ext_wanted == 'zip':
-				from app_center.editor import editor_revert, editor_worksapce_version, editor_release
+				from app_center.editor import editor_revert, editor_worksapce_version, zip_application
 				editor_revert(app, version, False)
 				got_ver = editor_worksapce_version(app)
 				if got_ver != version:
 					os.remove(new_filename)
-					editor_release(app, version, comment)
+					new_filename = zip_application(app, version)
 
 			data = {
 				"doctype": "IOT Application Version",
@@ -172,7 +172,8 @@ def create():
 				doc = frappe.get_doc(data).insert()
 				os.system("md5sum " + new_filename + " > " + new_filename + ".md5")
 			except Exception as ex:
-				os.remove(new_filename)
+				from app_center.appmgr import remove_version_file
+				remove_version_file(app, version)
 				throw("creation_failed")
 
 			copy_to_latest(app, version)
