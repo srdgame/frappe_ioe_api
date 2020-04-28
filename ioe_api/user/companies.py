@@ -26,7 +26,7 @@ def list():
 
 		data = []
 		for d in frappe.get_all("Cloud Employee", "company", filters={"user": frappe.session.user}):
-			data.append(get_doc_as_dict('Cloud Company', d.name))
+			data.append(get_doc_as_dict('Cloud Company', d.company))
 
 		frappe.response.update({
 			"ok": True,
