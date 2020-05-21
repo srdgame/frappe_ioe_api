@@ -243,7 +243,7 @@ def restart(gateway, inst, reason, id=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def upgrade(gateway, inst, app, version, conf=None, id=None):
+def upgrade(gateway, inst, app, version, conf=None, id=None, fork=None):
 	try:
 		valid_auth_code()
 		doc = frappe.get_doc('IOT Device', gateway)
@@ -257,6 +257,9 @@ def upgrade(gateway, inst, app, version, conf=None, id=None):
 		}
 		if conf is not None:
 			data.update({"conf": conf})
+		if fork is not None:
+			data.update({"fork": fork})
+
 		ret = fire_action(id=id, action="upgrade", gateway=gateway, data=data)
 
 		frappe.get_doc({
