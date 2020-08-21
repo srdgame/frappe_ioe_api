@@ -24,7 +24,11 @@ def test():
 def list():
 	try:
 		valid_auth_code()
-		data = list_admin_companies(frappe.session.user)
+		data = []
+		if 'Cloud Manager' in frappe.get_roles():
+			data = [d[0] for d in frappe.db.get_values("Cloud Company", {"enabled": 1}, "name")]
+		else:
+			data = list_admin_companies(frappe.session.user)
 
 		frappe.response.update({
 			"ok": True,
