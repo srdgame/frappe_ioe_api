@@ -20,10 +20,13 @@ def test():
 
 
 def list_company_groups(company):
-	if 'Company Admin' not in frappe.get_roles():
-		return []
+	if 'Cloud Manager' in frappe.get_roles():
+		return [d[0] for d in frappe.db.get_values("Cloud Company Group", {"company": company, "enabled": 1}, "name")]
 
-	return [d[0] for d in frappe.db.get_values("Cloud Company Group", {"company": company, "enabled": 1}, "name")]
+	if frappe.get_value("Cloud Company", company, "admin") == frappe.session.user:
+		return [d[0] for d in frappe.db.get_values("Cloud Company Group", {"company": company, "enabled": 1}, "name")]
+
+	return []
 
 
 @frappe.whitelist(allow_guest=True)
@@ -99,6 +102,12 @@ def update(name, group_name, description, enabled=1): #, user_list=None):
 		if 'Company Admin' not in frappe.get_roles():
 			throw("only_admin_can_update_group")
 
+		company_name = frappe.get_value("Cloud Company Group", name, "company")
+		if not company_name:
+			throw("invalid_name")
+		if frappe.get_value("Cloud Company", company_name, "admin") != frappe.session.user:
+			throw("not_admin_of_this_company")
+
 		data = {
 			"name": name,
 			"group_name": group_name,
@@ -144,6 +153,12 @@ def remove(name):
 		if 'Company Admin' not in frappe.get_roles():
 			throw("only_admin_can_remove_group")
 
+		company_name = frappe.get_value("Cloud Company Group", name, "company")
+		if not company_name:
+			throw("invalid_name")
+		if frappe.get_value("Cloud Company", company_name, "admin") != frappe.session.user:
+			throw("not_admin_of_this_company")
+
 		update_doc("Cloud Company Group", {
 			"name": name,
 			"enabled": 0
@@ -165,6 +180,12 @@ def add_user(name, user, role='Admin'):
 		valid_auth_code()
 		if 'Company Admin' not in frappe.get_roles():
 			throw("not_permitted")
+
+		company_name = frappe.get_value("Cloud Company Group", name, "company")
+		if not company_name:
+			throw("invalid_name")
+		if frappe.get_value("Cloud Company", company_name, "admin") != frappe.session.user:
+			throw("not_admin_of_this_company")
 
 		group = frappe.get_doc("Cloud Company Group", name)
 
@@ -194,6 +215,12 @@ def remove_user(name, user):
 		valid_auth_code()
 		if 'Company Admin' not in frappe.get_roles():
 			throw("not_permitted")
+
+		company_name = frappe.get_value("Cloud Company Group", name, "company")
+		if not company_name:
+			throw("invalid_name")
+		if frappe.get_value("Cloud Company", company_name, "admin") != frappe.session.user:
+			throw("not_admin_of_this_company")
 
 		group = frappe.get_doc("Cloud Company Group", name)
 
