@@ -257,6 +257,34 @@ def beta(app, version):
 		})
 
 
+@frappe.whitelist(allow_guest=True)
+def release(app, version):
+	try:
+		valid_auth_code()
+		beta = frappe.get_value('IOT Application Version', {"app": app, "version": version}, "beta")
+		if beta == 0:
+			frappe.response.update({
+				"ok": False,
+				"data": "version_already_released"
+			})
+		else:
+			# Currently we change the beta flag directly
+			doc_name = frappe.get_value('IOT Application Version', {"app": app, "version": version}, "name")
+			doc = frappe.get_doc('IOT Application Version', doc_name)
+			doc.set('beta', 0)
+			doc.save(ignore_permissions=True)
+			frappe.response.update({
+				"ok": True,
+				"data": as_dict(doc)
+			})
+
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": str(ex)
+		})
+
+
 def copy_app_release_file(from_app, to_app, version, beta=None):
 	from_file = get_app_release_filepath(from_app, version)
 	to_file = get_app_release_filepath(to_app, version)
