@@ -261,6 +261,9 @@ def beta(app, version):
 def release(app, version):
 	try:
 		valid_auth_code()
+
+		valid_app_owner(app)
+
 		beta = frappe.get_value('IOT Application Version', {"app": app, "version": version}, "beta")
 		if beta == 0:
 			frappe.response.update({
