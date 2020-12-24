@@ -62,7 +62,7 @@ def create(conf, version, data, comment):
 			"doctype": "IOT Application Conf Version",
 			"conf": conf,
 			"version": version,
-			"data": unescape_html(data),
+			"data": data,
 			"comment": comment
 		}).insert()
 
@@ -81,9 +81,11 @@ def create(conf, version, data, comment):
 def read(name):
 	try:
 		valid_auth_code()
+		data = get_doc_as_dict("IOT Application Conf Version", name)
+		data.data = unescape_html(data.data)
 		frappe.response.update({
 			"ok": True,
-			"data": get_doc_as_dict("IOT Application Conf Version", name)
+			"data": data
 		})
 	except Exception as ex:
 		frappe.response.update({
