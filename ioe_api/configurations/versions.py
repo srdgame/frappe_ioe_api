@@ -7,8 +7,9 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe.utils.html_utils import unescape_html
 from conf_center.conf_center.doctype.iot_application_conf_version.iot_application_conf_version import get_latest_version
-from ioe_api.helper import valid_auth_code, throw, as_dict, get_doc_as_dict, get_post_json_data
+from ioe_api.helper import valid_auth_code, throw, as_dict, get_doc_as_dict
 
 
 @frappe.whitelist(allow_guest=True)
@@ -49,21 +50,21 @@ def list(conf):
 
 
 @frappe.whitelist(allow_guest=True)
-def create():
+def create(conf, version, data, comment):
 	try:
 		valid_auth_code()
 		if frappe.request.method != "POST":
 			throw("method_must_be_post")
 
-		data = get_post_json_data()
+		valid_conf_owner(conf)
 
-		valid_conf_owner(data.get('conf'))
-
-		data.update({
-			"doctype": "IOT Application Conf Version"
-		})
-
-		doc = frappe.get_doc(data).insert()
+		doc = frappe.get_doc({
+			"doctype": "IOT Application Conf Version",
+			"conf": conf,
+			"version": version,
+			"data": unescape_html(data),
+			"comment": comment
+		}).insert()
 
 		frappe.response.update({
 			"ok": True,
