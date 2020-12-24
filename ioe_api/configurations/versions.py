@@ -7,7 +7,6 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.utils.html_utils import unescape_html
 from conf_center.conf_center.doctype.iot_application_conf_version.iot_application_conf_version import get_latest_version
 from ioe_api.helper import valid_auth_code, throw, as_dict, get_doc_as_dict
 
@@ -81,11 +80,9 @@ def create(conf, version, data, comment):
 def read(name):
 	try:
 		valid_auth_code()
-		data = get_doc_as_dict("IOT Application Conf Version", name)
-		data.data = unescape_html(data.data)
 		frappe.response.update({
 			"ok": True,
-			"data": data
+			"data": get_doc_as_dict("IOT Application Conf Version", name)
 		})
 	except Exception as ex:
 		frappe.response.update({
