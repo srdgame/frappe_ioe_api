@@ -65,6 +65,10 @@ def list():
 			if time_diff_in_seconds(end_time, get_datetime()) > 0:
 				device_share_list.append(frappe.get_value("IOT Device Share", d[0], "device"))
 
+		if 'IOT Manager' in frappe.get_roles(user):
+			for d in frappe.db.get_values("IOT Device", {"owner_type": ""}, "name"):
+				device_share_list.append(d[0])
+
 		shd_devices.append({"group": "IOT Device Share", "devices": device_share_list, "role": 'Admin'})
 
 		# Get Private Devices
