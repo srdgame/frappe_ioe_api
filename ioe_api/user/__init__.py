@@ -124,6 +124,33 @@ def create_user2(email, full_name, password):
 
 
 @frappe.whitelist(allow_guest=True)
+def update_password2(email, password):
+	try:
+		valid_auth_code()
+		if "Administrator" != frappe.session.user:
+			frappe.response.update({
+				"ok": False,
+				"error": 'exception',
+				"exception": str(frappe.session.user),
+			})
+			return
+
+		ret = _update_password2(email, password)
+
+		frappe.response.update({
+			"ok": True,
+			"result": ret,
+			"info": "update_password2"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": 'exception',
+			"exception": str(ex),
+		})
+
+
+@frappe.whitelist(allow_guest=True)
 def reset_password(email):
 	try:
 		info = _reset_password(user=email)
