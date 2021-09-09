@@ -69,15 +69,22 @@ def update_password(new_password, logout_all_sessions=0, key=None, old_password=
 			if not user:
 				throw("reset_key_incorrect")
 
-		ret = _update_password(new_password, logout_all_sessions, key, old_password)
-		if frappe.local.login_manager.user != user:
-			throw("update_password_failed")
+			ret = _update_password(new_password, logout_all_sessions, key, old_password)
+			if frappe.local.login_manager.user != user:
+				throw("update_password_failed")
 
-		frappe.response.update({
-			"ok": True,
-			"result": ret,
-			"info": "password_updated"
-		})
+			frappe.response.update({
+				"ok": True,
+				"result": ret,
+				"info": "password_updated"
+			})
+		else:
+			ret = _update_password2(user, new_password)
+			frappe.response.update({
+				"ok": True,
+				"result": ret,
+				"info": "password_updated"
+			})
 	except Exception as ex:
 		frappe.response.update({
 			"ok": False,
