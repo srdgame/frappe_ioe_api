@@ -10,6 +10,7 @@ import frappe
 from frappe.utils import cint
 from frappe.handler import logout as frappe_logout
 from frappe.core.doctype.user.user import sign_up, reset_password as _reset_password, update_password as _update_password
+from frappe.utils.password import update_password as _update_password2
 from cloud.cloud.doctype.cloud_company.cloud_company import list_user_companies
 from cloud.cloud.doctype.cloud_company_group.cloud_company_group import list_user_groups
 from ioe_api.helper import valid_auth_code, throw
@@ -69,6 +70,34 @@ def update_password(new_password, logout_all_sessions=0, key=None, old_password=
 				throw("reset_key_incorrect")
 
 		ret = _update_password(new_password, logout_all_sessions, key, old_password)
+		if frappe.local.login_manager.user != user:
+			throw("update_password_failed")
+
+		frappe.response.update({
+			"ok": True,
+			"result": ret,
+			"info": "password_updated"
+		})
+	except Exception as ex:
+		frappe.response.update({
+			"ok": False,
+			"error": 'exception',
+			"exception": str(ex),
+		})
+
+
+@frappe.whitelist(allow_guest=True)
+def update_password2(new_password, logout_all_sessions=0, key=None, old_password=None):
+	try:
+		user = frappe.session.user
+		if user == 'Guest':
+			if not key:
+				throw("reset_key_required")
+			user = frappe.db.get_value("User", {"reset_password_key": key})
+			if not user:
+				throw("reset_key_incorrect")
+
+		ret = _update_password2(user, new_password)
 		if frappe.local.login_manager.user != user:
 			throw("update_password_failed")
 
