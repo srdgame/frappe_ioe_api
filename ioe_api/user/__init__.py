@@ -79,6 +79,7 @@ def update_password(new_password, logout_all_sessions=0, key=None, old_password=
 				"info": "password_updated"
 			})
 		else:
+			# Why and Why??
 			ret = _update_password2(user, new_password)
 			frappe.response.update({
 				"ok": True,
@@ -94,24 +95,25 @@ def update_password(new_password, logout_all_sessions=0, key=None, old_password=
 
 
 @frappe.whitelist(allow_guest=True)
-def update_password2(new_password, logout_all_sessions=0, key=None, old_password=None):
+def create_user2(email, full_name, password):
 	try:
-		user = frappe.session.user
-		if user == 'Guest':
-			if not key:
-				throw("reset_key_required")
-			user = frappe.db.get_value("User", {"reset_password_key": key})
-			if not user:
-				throw("reset_key_incorrect")
+		valid_auth_code()
+		if "Administrator" != frappe.session.user:
+			frappe.response.update({
+				"ok": False,
+				"error": 'exception',
+				"exception": str(frappe.session.user),
+			})
+			return
 
-		ret = _update_password2(user, new_password)
-		if frappe.local.login_manager.user != user:
-			throw("update_password_failed")
+		ret, info = sign_up(email=email, full_name=full_name, redirect_to=None)
+		if ret > 0:
+			ret = _update_password2(email, password)
 
 		frappe.response.update({
 			"ok": True,
 			"result": ret,
-			"info": "password_updated"
+			"info": "create_user2"
 		})
 	except Exception as ex:
 		frappe.response.update({
